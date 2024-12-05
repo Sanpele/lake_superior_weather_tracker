@@ -1,0 +1,26 @@
+WORD_REDUCTION_MAP = {
+    "becoming": "BEC",
+    "increasing": "INC",
+    "decreasing": "DEC",
+    "afternoon": "AFT",
+    "evening": "eve",
+    "then": ",",
+    "late overnight": "ONight",
+    "monday": "Mon",
+    "tuesday": "Tue",
+    "wednsday": "Wed",
+    "thursday": "Thur",
+    "friday": "Fri",
+    "saturday": "Sat",
+    "sunday": "Sun",
+    "northwest": "NW",
+    "northeast": "NE",
+    "southwest": "SW",
+    "southeast": "SE",
+    "morning": "Morn",
+    "Metres Or Less.": "M",
+    "periods of": "mab",
+    "this": "dis ",
+}
+
+INTERNAL_FAILURE_MSG = "If you get this, something went wrong - please yell at colin"
