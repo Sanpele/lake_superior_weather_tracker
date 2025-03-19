@@ -12,7 +12,7 @@ def call_function_on_str_fields_of_class(generic_class: any, string_function_lam
 
 def get_request(url: str) -> str or None:
     response = requests.get(url)
-    return response if response else None
+    return response.text if response else None
 
 
 def parse_fuzzy_date_string(fuzzy_string: str) -> datetime or None:
