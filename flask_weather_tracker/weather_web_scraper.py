@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Tuple
 
 import xmltodict
 
@@ -17,13 +18,13 @@ class GovWeatherScraper:
         try:
             weather_xml = get_request(XML_URL)
             weather_dict = xmltodict.parse(weather_xml)
-            weather_report = self.get_info(weather_dict)
-            return weather_report
+            eastern_report, western_report = self.get_info(weather_dict)
+            return eastern_report, western_report
         except Exception as e:
             print(e)
             raise Exception(INTERNAL_FAILURE_MSG)
 
-    def get_info(self, raw_report_dict) -> WeatherReport:
+    def get_info(self, raw_report_dict) -> Tuple[WeatherReport, WeatherReport]:
         main_data = raw_report_dict.get("feed")
         title = main_data.get("title")
         date_str = main_data.get("updated")  # re-visit
@@ -46,18 +47,25 @@ class GovWeatherScraper:
             self.process_single_weather_entry(entry_list, 5),
         )
 
-        weather_report = WeatherReport(
+        eastern_weather_report = WeatherReport(
+            cardinal_direction="east",
             title=title,
             date=date,
-            eastern_forcast=eastern_forcast,
-            eastern_waves=eastern_waves,
-            eastern_extended=eastern_extended,
-            western_forecast=western_forecast,
-            western_waves=western_waves,
-            western_extended=western_extended,
+            forcast=eastern_forcast,
+            waves=eastern_waves,
+            extended=eastern_extended,
         )
 
-        return weather_report
+        western_weather_report = WeatherReport(
+            cardinal_direction="west",
+            title=title,
+            date=date,
+            forcast=western_forecast,
+            waves=western_waves,
+            extended=western_extended,
+        )
+
+        return eastern_weather_report, western_weather_report
 
     @staticmethod
     def process_single_weather_entry(weather_entry, index):

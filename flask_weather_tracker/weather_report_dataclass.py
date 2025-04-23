@@ -1,5 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
+
+"""
+schema to return from API
+"""
 
 
 @dataclass
@@ -12,13 +17,14 @@ class SpecificEntry:
 
 @dataclass
 class WeatherReport:
+    cardinal_direction: str  # east or west
     title: str
     date: datetime
 
-    eastern_forcast: SpecificEntry
-    eastern_waves: SpecificEntry
-    eastern_extended: SpecificEntry
+    forcast: SpecificEntry
+    waves: SpecificEntry
+    extended: SpecificEntry
 
-    western_forecast: SpecificEntry
-    western_waves: SpecificEntry
-    western_extended: SpecificEntry
+    wind_direction: Optional[str] = None
+    wind_speed: Optional[str] = None
+    wave_height: Optional[str] = None

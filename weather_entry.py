@@ -8,5 +8,5 @@ app.json.sort_keys = False  # want WeatherReport returned as defined on class, n
 
 @app.route("/weather")
 def weather():
-    weather_report = GovWeatherScraper().get()
-    return weather_report.__dict__
+    eastern_report, western_report = GovWeatherScraper().get()
+    return {"east": eastern_report, "west": western_report}
