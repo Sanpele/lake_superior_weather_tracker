@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from django_weather_tracker.weather_tracker.views import WeatherForecastView
+from weather_tracker.views import WeatherForecastView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
