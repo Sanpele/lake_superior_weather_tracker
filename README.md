@@ -1,5 +1,7 @@
 # lake_superior_weather_tracker
 
+weather tracking app to (eventually) visualize lake superior weather
 
-LIFESAVER, READ MORE LATER
-https://blog.miguelgrinberg.com/post/setting-up-a-flask-application-in-pycharm
+django backend
+______ frontend 
+
