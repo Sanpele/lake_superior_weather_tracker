@@ -3,11 +3,11 @@ from typing import Tuple
 
 import xmltodict
 
-from flask_weather_tracker.constants import INTERNAL_FAILURE_MSG
-from flask_weather_tracker.utils import (
+from django_weather_tracker.weather_tracker.constants import INTERNAL_FAILURE_MSG
+from django_weather_tracker.weather_tracker.utils import (
     get_request,
 )
-from flask_weather_tracker.weather_report_dataclass import WeatherReport, SpecificEntry
+from django_weather_tracker.weather_tracker.dataclasses.weather_report_dataclass import WeatherReport, SpecificEntry
 
 XML_URL = "https://weather.gc.ca/rss/marine/08500_e.xml"
 
