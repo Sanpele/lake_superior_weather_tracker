@@ -22,5 +22,5 @@ from weather_tracker.views import WeatherForecastView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("weather/", WeatherForecastView.as_view())
+    path("weather/", WeatherForecastView.as_view()),
 ]

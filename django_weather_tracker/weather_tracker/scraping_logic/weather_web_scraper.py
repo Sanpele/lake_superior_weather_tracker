@@ -7,7 +7,10 @@ from weather_tracker.constants import INTERNAL_FAILURE_MSG
 from weather_tracker.utils import (
     get_request,
 )
-from weather_tracker.dataclasses.weather_report_dataclass import WeatherReport, SpecificEntry
+from weather_tracker.dataclasses.weather_report_dataclass import (
+    WeatherReport,
+    SpecificEntry,
+)
 
 XML_URL = "https://weather.gc.ca/rss/marine/08500_e.xml"
 
