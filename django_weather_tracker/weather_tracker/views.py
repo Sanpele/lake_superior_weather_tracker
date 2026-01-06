@@ -1,27 +1,27 @@
-from dataclasses import asdict
 from datetime import datetime
 
-from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from weather_tracker.models import WeatherReport, Region, ReportType, Category
 from weather_tracker.scraping_logic.weather_web_scraper import GovWeatherScraper
+from weather_tracker.serializers.weather_report_serializer import WeatherReportSerializer
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class WeatherForecastView(View):
+class WeatherForecastView(APIView):
     http_method_names = ["get", "post"]
 
     def get(self, request):
-        eastern_report, western_report = GovWeatherScraper().get()
-        content = {"east": asdict(eastern_report), "west": asdict(western_report)}
-        return JsonResponse(content, encoder=DjangoJSONEncoder)
+        weather_report_list = GovWeatherScraper().get()
+        serializer = WeatherReportSerializer(weather_report_list, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
-        eastern_report, western_report = GovWeatherScraper().get()
+        weather_report_list = GovWeatherScraper().get()
 
         today = datetime.now()
         today_date = today.date()

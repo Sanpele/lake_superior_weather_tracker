@@ -4,12 +4,9 @@ from typing import Tuple
 import xmltodict
 
 from weather_tracker.constants import INTERNAL_FAILURE_MSG
+from weather_tracker.models import Region, ReportType, Category, WeatherReport
 from weather_tracker.utils import (
     get_request,
-)
-from weather_tracker.dataclasses.weather_report_dataclass import (
-    WeatherReport,
-    SpecificEntry,
 )
 
 XML_URL = "https://weather.gc.ca/rss/marine/08500_e.xml"
@@ -21,11 +18,25 @@ class GovWeatherScraper:
         try:
             weather_xml = get_request(XML_URL)
             weather_dict = xmltodict.parse(weather_xml)
-            eastern_report, western_report = self.get_info(weather_dict)
-            return eastern_report, western_report
+            weather_report_list = self.parse_webpage_and_create_reports(weather_dict)
+            return weather_report_list
         except Exception as e:
             print(e)
             raise Exception(INTERNAL_FAILURE_MSG)
+
+    def parse_webpage_and_create_reports(self, raw_report_dict):
+        main_data = raw_report_dict.get("feed")
+        entry_list = main_data.get("entry", [])
+
+        report_list = [
+            self.parse_weather_entry(
+                main_data,
+                entry,
+            )
+            for entry in entry_list
+        ]
+
+        return report_list
 
     def get_info(self, raw_report_dict) -> Tuple[WeatherReport, WeatherReport]:
         main_data = raw_report_dict.get("feed")
@@ -70,18 +81,30 @@ class GovWeatherScraper:
 
         return eastern_weather_report, western_weather_report
 
-    @staticmethod
-    def process_single_weather_entry(weather_entry, index):
-        if not weather_entry or len(weather_entry) != 6:
+    def parse_weather_entry(self, main_data, entry_dict):
+        if not main_data or not entry_dict:
             return None
 
-        specific_entry_dict = weather_entry[index]
+        report_type = self.extract_report_type(entry_dict)
+        report_region = self.extract_report_region(entry_dict)
 
-        specific_entry = SpecificEntry(
-            title=specific_entry_dict.get("title"),
-            published=specific_entry_dict.get("published"),
-            category=specific_entry_dict.get("category", {}).get("@term"),
-            summary=specific_entry_dict.get("summary", {}).get("#text"),
+        weather_report = WeatherReport(
+            region=report_region,
+            report_type=report_type,
+            title=main_data.get("title"),
+            date="",
+            published_time=entry_dict.get("published"),
+            updated_time="today",
+            category=Category.MARINE,
+            summary="placeholder :)",
+            link="https://www.weather.gc.ca/marine/forecast_e.html?mapID=09&siteID=08507#forecast",
+            weather_canada_id="abc123",
         )
 
-        return specific_entry
+        return weather_report
+
+    def extract_report_type(self, weather_entry: dict) -> ReportType:
+        pass
+
+    def extract_report_region(self, weather_entry: dict) -> Region:
+        pass
