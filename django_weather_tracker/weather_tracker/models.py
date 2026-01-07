@@ -4,12 +4,14 @@ from django.db import models
 class Region(models.TextChoices):
     EASTERN_LAKE_SUPERIOR = "eastern_lake_superior"
     WESTERN_LAKE_SUPERIOR = "western_lake_superior"
+    UNDEFINED = "undefined"
 
 
 class ReportType(models.TextChoices):
     DETAILED = "detailed"
     WAVES = "waves"
     EXTENDED = "extended"
+    UNDEFINED = "undefined"
 
 
 class Category(models.TextChoices):
@@ -27,3 +29,11 @@ class WeatherReport(models.Model):
     summary = models.TextField()
     link = models.URLField(max_length=255)
     weather_canada_id = models.CharField(max_length=255)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["region", "report_type", "published_time"],
+                name="unique_region_and_report_type",
+            )
+        ]

@@ -85,26 +85,58 @@ class GovWeatherScraper:
         if not main_data or not entry_dict:
             return None
 
-        report_type = self.extract_report_type(entry_dict)
-        report_region = self.extract_report_region(entry_dict)
+        updated_str = main_data.get("updated")
+        updated_time = datetime.strptime(updated_str, "%Y-%m-%dT%H:%M:%SZ")
+        date = updated_time.date()
+
+        published_time = entry_dict.get("published")
+        weather_canada_id = entry_dict.get("id")
+        link = entry_dict.get("link", {}).get("@href")  # webpage link,
+        title = entry_dict.get("title", "")
+        summary = entry_dict.get("summary", {}).get("#text", "")
+
+        report_type = self.extract_report_type(title)
+        report_region = self.extract_report_region(title)
 
         weather_report = WeatherReport(
             region=report_region,
             report_type=report_type,
-            title=main_data.get("title"),
-            date="",
-            published_time=entry_dict.get("published"),
-            updated_time="today",
+            title=title,
+            date=date,
+            published_time=published_time,
+            updated_time=updated_time,
             category=Category.MARINE,
-            summary="placeholder :)",
-            link="https://www.weather.gc.ca/marine/forecast_e.html?mapID=09&siteID=08507#forecast",
-            weather_canada_id="abc123",
+            summary=summary,
+            link=link,
+            weather_canada_id=weather_canada_id,
         )
 
         return weather_report
 
-    def extract_report_type(self, weather_entry: dict) -> ReportType:
-        pass
+    @staticmethod
+    def extract_report_type(title: str) -> ReportType:
+        title = title.lower()
 
-    def extract_report_region(self, weather_entry: dict) -> Region:
-        pass
+        if "extended forecast" in title:
+            report_type = ReportType.EXTENDED
+        elif "forecast for" in title:
+            report_type = ReportType.DETAILED
+        elif "waves for" in title:
+            report_type = ReportType.WAVES
+        else:
+            report_type = ReportType.UNDEFINED
+
+        return report_type
+
+    @staticmethod
+    def extract_report_region(title: str) -> Region:
+        title = title.lower()
+
+        if "western" in title:
+            region = Region.WESTERN_LAKE_SUPERIOR
+        elif "eastern" in title:
+            region = Region.EASTERN_LAKE_SUPERIOR
+        else:
+            region = Region.UNDEFINED
+
+        return region
