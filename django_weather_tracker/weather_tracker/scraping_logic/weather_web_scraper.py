@@ -9,6 +9,7 @@ from weather_tracker.utils import (
     get_request,
 )
 
+
 XML_URL = "https://weather.gc.ca/rss/marine/08500_e.xml"
 
 
