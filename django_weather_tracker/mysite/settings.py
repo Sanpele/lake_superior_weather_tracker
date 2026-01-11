@@ -1,3 +1,5 @@
+import os
+
 from environs import Env
 
 env = Env()
@@ -56,8 +58,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "mysite.wsgi.application"
 
 
-# Database
-
 DATABASES = {
     "default": env.dj_db_url(
         "DATABASE_URL",
@@ -65,6 +65,28 @@ DATABASES = {
         conn_health_checks=True,
         ssl_require=not DEBUG,
     ),
+}
+
+LOG_LEVEL = os.getenv("DJANGO_LOG_LEVEL", "INFO")
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": LOG_LEVEL,
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+            "propagate": False,
+        },
+    },
 }
 
 # Internationalization
@@ -77,7 +99,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/

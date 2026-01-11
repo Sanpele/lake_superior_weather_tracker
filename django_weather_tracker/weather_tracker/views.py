@@ -1,6 +1,4 @@
 from django.http import JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,7 +9,6 @@ from weather_tracker.serializers.weather_report_serializer import (
 )
 
 
-@method_decorator(csrf_exempt, name="dispatch")
 class WeatherForecastView(APIView):
     http_method_names = ["get", "post"]
 
