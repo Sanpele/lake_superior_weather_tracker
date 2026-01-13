@@ -1,3 +1,5 @@
+import sys
+
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,6 +17,14 @@ class WeatherForecastView(APIView):
     def get(self, request):
         weather_report_list = GovWeatherScraper().get()
         serializer = WeatherReportSerializer(weather_report_list, many=True)
+
+        sys.stderr.write("STDERR TEST\n")
+        sys.stderr.flush()
+
+        import logging
+
+        logging.error("LOGGING ERROR TEST")
+
         return Response(serializer.data)
 
     def post(self, request):
