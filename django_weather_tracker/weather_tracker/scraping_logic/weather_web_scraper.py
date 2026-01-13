@@ -70,8 +70,7 @@ class GovWeatherScraper:
 
         return weather_report
 
-    @staticmethod
-    def extract_report_type(title: str) -> ReportType:
+    def extract_report_type(self, title: str) -> ReportType:
         title = title.lower()
 
         if "extended forecast" in title:
@@ -85,6 +84,7 @@ class GovWeatherScraper:
         elif "gale warning" in title:
             report_type = ReportType.GALE_WARNING
         else:
+            self.logger.warning(f"Unknown report type: {title}")
             report_type = ReportType.UNDEFINED
 
         return report_type
