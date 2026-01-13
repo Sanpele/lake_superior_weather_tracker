@@ -11,6 +11,8 @@ class ReportType(models.TextChoices):
     DETAILED = "detailed"
     WAVES = "waves"
     EXTENDED = "extended"
+    FREEZING_SPRAY_WARNING = "FREEZING_SPRAY_WARNING"
+    GALE_WARNING = "GALE_WARNING"
     UNDEFINED = "undefined"
 
 
@@ -20,7 +22,7 @@ class Category(models.TextChoices):
 
 class WeatherReport(models.Model):
     region = models.CharField(max_length=30, choices=Region.choices)
-    report_type = models.CharField(max_length=20, choices=ReportType.choices)
+    report_type = models.CharField(max_length=40, choices=ReportType.choices)
     title = models.CharField(max_length=255)
     date = models.DateField()
     published_time = models.DateTimeField()

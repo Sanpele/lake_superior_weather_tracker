@@ -80,6 +80,10 @@ class GovWeatherScraper:
             report_type = ReportType.DETAILED
         elif "waves for" in title:
             report_type = ReportType.WAVES
+        elif "freezing spray warning" in title:
+            report_type = ReportType.FREEZING_SPRAY_WARNING
+        elif "gale warning" in title:
+            report_type = ReportType.GALE_WARNING
         else:
             report_type = ReportType.UNDEFINED
 
