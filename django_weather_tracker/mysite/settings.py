@@ -80,13 +80,6 @@ LOGGING = {
         "handlers": ["console"],
         "level": LOG_LEVEL,
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": LOG_LEVEL,
-            "propagate": False,
-        },
-    },
 }
 
 # Internationalization
