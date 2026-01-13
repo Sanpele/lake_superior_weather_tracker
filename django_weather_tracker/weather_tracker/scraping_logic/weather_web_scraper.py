@@ -84,7 +84,7 @@ class GovWeatherScraper:
         elif "gale warning" in title:
             report_type = ReportType.GALE_WARNING
         else:
-            self.logger.warning(f"Unknown report type: {title}")
+            self.logger.error(f"Unknown report type: {title}")
             report_type = ReportType.UNDEFINED
 
         return report_type
