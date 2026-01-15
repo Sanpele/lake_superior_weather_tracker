@@ -68,19 +68,40 @@ DATABASES = {
 }
 
 LOG_LEVEL = os.getenv("DJANGO_LOG_LEVEL", "INFO")
+ENV = os.getenv("DJANGO_ENV", "local")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
+    "formatters": {
+        "standard": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
         },
     },
+    "handlers": {},
     "root": {
-        "handlers": ["console"],
+        "handlers": [],
         "level": LOG_LEVEL,
     },
 }
+
+if ENV == "local":
+    LOGGING["handlers"]["console"] = {
+        "class": "logging.StreamHandler",
+        "formatter": "standard",
+    }
+    LOGGING["root"]["handlers"].append("console")
+
+else:  # prod / PythonAnywhere
+    LOGGING["handlers"]["file"] = {
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": f"{BASE_DIR}/django.log",
+        "maxBytes": 10 * 1024 * 1024,
+        "backupCount": 5,
+        "formatter": "standard",
+    }
+    LOGGING["root"]["handlers"].append("file")
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
