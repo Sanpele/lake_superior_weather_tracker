@@ -24,8 +24,8 @@ class GovWeatherScraper:
             self.logger.error(e)
             return False  # return invalid report list?
 
-    def parse_webpage_and_create_reports(self, raw_report_dict):
-        main_data = raw_report_dict.get("feed")
+    def parse_webpage_and_create_reports(self, raw_report_dict, root_key="feed"):
+        main_data = raw_report_dict.get(root_key)
         entry_list = main_data.get("entry", [])
 
         report_list = [
