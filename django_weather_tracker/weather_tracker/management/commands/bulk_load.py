@@ -1,10 +1,12 @@
 import os
 
 import xmltodict
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from weather_tracker.db_managers.weather_report_manager import WeatherReportManager
-from weather_tracker.scraping_logic.weather_web_scraper import GovWeatherScraper
+from weather_tracker.parsers.marine_xml_historical_parser import (
+    MarineXmlHistoricalParser,
+)
 
 
 class Command(BaseCommand):
@@ -50,12 +52,9 @@ class Command(BaseCommand):
             with open(file_path, "r") as f:
                 weather_xml = f.read()
                 weather_dict = xmltodict.parse(weather_xml)
-                weather_report_day_list = (
-                    GovWeatherScraper().parse_webpage_and_create_reports(
-                        weather_dict, root_key="marineData"
-                    )
+                weather_report_day_list = MarineXmlHistoricalParser().parse(
+                    weather_dict
                 )
-
                 weather_report_list.extend(weather_report_day_list)
 
         WeatherReportManager().save_list(weather_report_list)
