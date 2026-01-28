@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from weather_tracker.models import Region, ReportType, Category, WeatherReport
 from weather_tracker.parsers.generic_parser import GenericParser
@@ -89,3 +90,55 @@ class MarineXmlAPIParser(GenericParser):
             region = Region.UNDEFINED
 
         return region
+
+    # ---- Summary parsing (format per ReportType; add logic when samples are available) ----
+
+    def parse_summary(self, summary: str, report_type: ReportType) -> dict[str, Any] | None:
+        """
+        Parse the summary text into a structured dict based on report_type.
+        Returns None for UNDEFINED or on parse failure.
+        """
+        if not (summary or "").strip():
+            return None
+        if report_type == ReportType.UNDEFINED:
+            return None
+        try:
+            if report_type == ReportType.DETAILED:
+                return self._parse_detailed_summary(summary)
+            if report_type == ReportType.WAVES:
+                return self._parse_waves_summary(summary)
+            if report_type == ReportType.EXTENDED:
+                return self._parse_extended_summary(summary)
+            if report_type == ReportType.FREEZING_SPRAY_WARNING:
+                return self._parse_freezing_spray_warning_summary(summary)
+            if report_type == ReportType.GALE_WARNING:
+                return self._parse_gale_warning_summary(summary)
+        except Exception as e:
+            self.logger.warning("Summary parse failed for %s: %s", report_type, e)
+            return None
+        return None
+
+    def _parse_detailed_summary(self, summary: str) -> dict[str, Any]:
+        """Parse summary for ReportType.DETAILED. Format TBD from samples."""
+        # TODO: implement once sample format is known
+        return {"raw": summary}
+
+    def _parse_waves_summary(self, summary: str) -> dict[str, Any]:
+        """Parse summary for ReportType.WAVES. Format TBD from samples."""
+        # TODO: implement once sample format is known
+        return {"raw": summary}
+
+    def _parse_extended_summary(self, summary: str) -> dict[str, Any]:
+        """Parse summary for ReportType.EXTENDED. Format TBD from samples."""
+        # TODO: implement once sample format is known
+        return {"raw": summary}
+
+    def _parse_freezing_spray_warning_summary(self, summary: str) -> dict[str, Any]:
+        """Parse summary for ReportType.FREEZING_SPRAY_WARNING. Format TBD from samples."""
+        # TODO: implement once sample format is known
+        return {"raw": summary}
+
+    def _parse_gale_warning_summary(self, summary: str) -> dict[str, Any]:
+        """Parse summary for ReportType.GALE_WARNING. Format TBD from samples."""
+        # TODO: implement once sample format is known
+        return {"raw": summary}
