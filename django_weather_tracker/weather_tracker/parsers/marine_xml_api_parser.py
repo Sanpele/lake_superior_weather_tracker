@@ -59,7 +59,12 @@ class MarineXmlAPIParser(GenericParser):
         summary = entry_dict.get("summary", {}).get("#text", "")
         report_type = self.extract_report_type(title)
         report_region = self.extract_report_region(title)
-        detailed_summary = self.parse_summary(summary, report_type)
+        parsed = self.parse_summary(summary, report_type) or {}
+
+        wind_direction = parsed.get("wind_direction")
+        wind_speed_knots = parsed.get("wind_speed")
+        max_wave_height_m = parsed.get("max_wave_height")
+        visibility_text = parsed.get("visibility")
 
         weather_report = WeatherReport(
             region=report_region,
@@ -70,6 +75,10 @@ class MarineXmlAPIParser(GenericParser):
             updated_time=updated_time,
             category=Category.MARINE,
             summary=summary,
+            wind_direction=wind_direction,
+            wind_speed_knots=wind_speed_knots,
+            max_wave_height_m=max_wave_height_m,
+            visibility_text=visibility_text,
             link=link,
             weather_canada_id=weather_canada_id,
         )

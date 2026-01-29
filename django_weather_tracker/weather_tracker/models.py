@@ -29,6 +29,13 @@ class WeatherReport(models.Model):
     updated_time = models.DateTimeField()
     category = models.CharField(max_length=20, choices=Category.choices)
     summary = models.TextField()
+
+    # Parsed "critical" fields from summary (nullable because they depend on report_type)
+    wind_direction = models.CharField(max_length=32, null=True, blank=True)
+    wind_speed_knots = models.FloatField(null=True, blank=True)
+    max_wave_height_m = models.FloatField(null=True, blank=True)
+    visibility_text = models.CharField(max_length=255, null=True, blank=True)
+
     link = models.URLField(max_length=255)
     weather_canada_id = models.CharField(max_length=255)
 
