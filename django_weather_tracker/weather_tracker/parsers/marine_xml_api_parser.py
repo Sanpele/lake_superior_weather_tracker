@@ -1,8 +1,15 @@
+import re
 from datetime import datetime
 from typing import Any
 
 from weather_tracker.models import Region, ReportType, Category, WeatherReport
 from weather_tracker.parsers.generic_parser import GenericParser
+
+# Month name to number for "Issued DD Month YYYY"
+_MONTH_NAMES = [
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december",
+]
 
 
 class MarineXmlAPIParser(GenericParser):
@@ -40,10 +47,12 @@ class MarineXmlAPIParser(GenericParser):
         link = entry_dict.get("link", {}).get("@href")  # webpage link,
         title = entry_dict.get("title", "")
         summary = entry_dict.get("summary", {}).get("#text", "")
-
         report_type = self.extract_report_type(title)
         report_region = self.extract_report_region(title)
 
+        summary_parsed = self._parsed_summary_for_db(summary, report_type)
+        print(summary_parsed)
+        
         weather_report = WeatherReport(
             region=report_region,
             report_type=report_type,
@@ -91,7 +100,43 @@ class MarineXmlAPIParser(GenericParser):
 
         return region
 
-    # ---- Summary parsing (format per ReportType; add logic when samples are available) ----
+    # ---- Summary parsing ----
+
+    _ISSUED_RE = re.compile(
+        r"<br/>\s*Issued\s+(\d{1,2}):(\d{2})\s+(AM|PM)\s+EST\s+(\d{1,2})\s+(\w+)\s+(\d{4})\s*$",
+        re.IGNORECASE,
+    )
+
+    @staticmethod
+    def _parse_issued_line(text: str) -> dict[str, Any] | None:
+        """
+        Parse trailing 'Issued HH:MM AM/PM EST DD Month YYYY' from summary text.
+        Returns dict with issued_raw (str), issued_at (datetime | None), and body (rest of text).
+        """
+        text = (text or "").strip()
+        if not text:
+            return {"body": "", "issued_raw": "", "issued_at": None}
+        m = MarineXmlAPIParser._ISSUED_RE.search(text)
+        if not m:
+            return {"body": text, "issued_raw": "", "issued_at": None}
+        hour, minute, ampm, day, month_name, year = m.groups()
+        body = text[: m.start()].strip()
+        issued_raw = m.group(0).replace("<br/>", "").strip()
+        hour_i = int(hour)
+        if ampm.upper() == "PM" and hour_i != 12:
+            hour_i += 12
+        elif ampm.upper() == "AM" and hour_i == 12:
+            hour_i = 0
+        month_lower = month_name.lower()
+        try:
+            month_i = _MONTH_NAMES.index(month_lower) + 1
+        except ValueError:
+            month_i = 1
+        try:
+            issued_at = datetime(int(year), month_i, int(day), hour_i, int(minute))
+        except (ValueError, TypeError):
+            issued_at = None
+        return {"body": body, "issued_raw": issued_raw, "issued_at": issued_at}
 
     def parse_summary(self, summary: str, report_type: ReportType) -> dict[str, Any] | None:
         """
@@ -119,19 +164,88 @@ class MarineXmlAPIParser(GenericParser):
         return None
 
     def _parse_detailed_summary(self, summary: str) -> dict[str, Any]:
-        """Parse summary for ReportType.DETAILED. Format TBD from samples."""
-        # TODO: implement once sample format is known
-        return {"raw": summary}
+        """
+        Parse detailed forecast: wind paragraph, precipitation/visibility/freezing-spray
+        blocks (double-space separated), and trailing Issued line.
+        """
+        out = self._parse_issued_line(summary)
+        body = out["body"].replace("\n", " ")
+        # Split on double space into blocks; first block is wind, rest are conditions
+        blocks = [b.strip() for b in re.split(r"\s{2,}", body) if b.strip()]
+        wind_text = ""
+        conditions: list[str] = []
+        for block in blocks:
+            if block.lower().startswith("wind ") and not wind_text:
+                wind_text = block
+            else:
+                conditions.append(block)
+        return {
+            "wind": wind_text,
+            "conditions": conditions,
+            "issued_raw": out["issued_raw"],
+            "issued_at": out["issued_at"],
+            "raw": summary,
+        }
 
     def _parse_waves_summary(self, summary: str) -> dict[str, Any]:
-        """Parse summary for ReportType.WAVES. Format TBD from samples."""
-        # TODO: implement once sample format is known
-        return {"raw": summary}
+        """
+        Parse waves summary: wave height phrases (e.g. "1 metre building to 1.5 Tuesday
+        morning") and optional Issued line. Returns wave_phrases (list of str) and
+        parsed heights when detectable (e.g. {"min": 1, "max": 1.5, "unit": "m"}).
+        """
+        out = self._parse_issued_line(summary)
+        body = out["body"].replace("\n", " ").strip()
+        # Split into sentences (period or <br/>); keep only "Waves ..." phrases
+        parts = re.split(r"\.\s+|<br/>\s*", body)
+        wave_phrases = [p.strip() for p in parts if p.strip().lower().startswith("waves ")]
+        # Optionally parse numeric heights: "1 metre", "1.5", "0.5 to 1", "1 to 1.5", "0.5 or less"
+        height_re = re.compile(
+            r"(\d+(?:\.\d+)?)\s*(?:\s+to\s+(\d+(?:\.\d+)?)|\s+or\s+less)?\s*(?:metre|metres)?",
+            re.IGNORECASE,
+        )
+        heights: list[dict[str, Any]] = []
+        for phrase in wave_phrases:
+            for m in height_re.finditer(phrase):
+                g = m.groups()
+                if g[1]:
+                    heights.append({"min": float(g[0]), "max": float(g[1]), "unit": "m"})
+                elif "or less" in phrase[m.start() : m.end() + 20].lower():
+                    heights.append({"max": float(g[0]), "unit": "m"})
+                else:
+                    heights.append({"value": float(g[0]), "unit": "m"})
+        return {
+            "wave_phrases": wave_phrases,
+            "heights": heights,
+            "issued_raw": out["issued_raw"],
+            "issued_at": out["issued_at"],
+            "raw": summary,
+        }
 
     def _parse_extended_summary(self, summary: str) -> dict[str, Any]:
-        """Parse summary for ReportType.EXTENDED. Format TBD from samples."""
-        # TODO: implement once sample format is known
-        return {"raw": summary}
+        """
+        Parse extended forecast: day blocks "DayName: Wind ..." separated by <br/>,
+        then Issued line.
+        """
+        out = self._parse_issued_line(summary)
+        body = out["body"].replace("\n", " ")
+        # Split by <br/> and parse "Weekday: Wind ..." or "Weekday: Wind light."
+        day_re = re.compile(r"^(\w+):\s*(.+)$", re.IGNORECASE)
+        days: list[dict[str, str]] = []
+        for segment in re.split(r"<br/>\s*", body):
+            segment = segment.strip()
+            if not segment or segment.lower().startswith("issued"):
+                continue
+            mo = day_re.match(segment)
+            if mo:
+                days.append({"day": mo.group(1), "wind": mo.group(2).strip()})
+            elif segment:
+                days.append({"day": "", "wind": segment})
+        return {
+            "days": days,
+            "issued_raw": out["issued_raw"],
+            "issued_at": out["issued_at"],
+            "raw": summary,
+        }
 
     def _parse_freezing_spray_warning_summary(self, summary: str) -> dict[str, Any]:
         """Parse summary for ReportType.FREEZING_SPRAY_WARNING. Format TBD from samples."""
