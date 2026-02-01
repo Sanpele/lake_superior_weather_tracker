@@ -18,9 +18,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from weather_tracker.views import WeatherForecastView
+from weather_tracker.views import WeatherForecastView, DailyWeatherReportView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("weather/", WeatherForecastView.as_view()),
+    path("weather-report/", DailyWeatherReportView.as_view()),
 ]

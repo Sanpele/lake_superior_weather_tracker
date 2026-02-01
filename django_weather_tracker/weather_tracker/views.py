@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -29,3 +31,22 @@ class WeatherForecastView(APIView):
         content = {"success": was_save_successful}
 
         return JsonResponse(content)
+
+
+class DailyWeatherReportView(APIView):
+    http_method_names = ["get", "post"]
+
+    def get(self, request):
+
+        latest_reports = WeatherReportManager().get_latest_weather_reports()
+
+        grouped = defaultdict(list)
+
+        for row in latest_reports:
+            grouped[row.region].append(row)
+
+        response = []
+        for region, rows in grouped.items():
+            response.append(WeatherReportManager().build_daily_report_summary(rows))
+
+        return Response({"success": True, "daily_reports": response})
