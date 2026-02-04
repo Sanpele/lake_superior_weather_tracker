@@ -3,5 +3,5 @@
 weather tracking app to (eventually) visualize lake superior weather
 
 django backend
-______ frontend 
+react frontend 
 
