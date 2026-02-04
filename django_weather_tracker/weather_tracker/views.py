@@ -26,9 +26,11 @@ class WeatherForecastView(APIView):
     def post(self, request):
         weather_dict = GovWeatherRequest().get()
         weather_report_list = MarineXmlAPIParser().parse(weather_dict)
-        was_save_successful = WeatherReportManager().save_list(weather_report_list)
+        was_save_successful, reason = WeatherReportManager().save_list(
+            weather_report_list
+        )
 
-        content = {"success": was_save_successful}
+        content = {"success": was_save_successful, "info": reason}
 
         return JsonResponse(content)
 

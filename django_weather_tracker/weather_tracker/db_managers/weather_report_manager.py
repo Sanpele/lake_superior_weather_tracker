@@ -10,13 +10,20 @@ class WeatherReportManager:
     def __init__(self):
         self.logger = logging.getLogger()
 
-    def save_list(self, weather_report_list):
+    def save_list(self, weather_report_list: list[WeatherReport]):
         try:
+            have_we_already_saved_today = WeatherReport.objects.filter(
+                published_time=weather_report_list[0].published_time
+            ).exists()
+
+            if have_we_already_saved_today:
+                return False, "we already saved today :)"
+
             WeatherReport.objects.bulk_create(weather_report_list)
-            return True
+            return True, "saved successfully"
         except Exception as e:
             self.logger.exception(e)
-            return False
+            return False, "something went wrong"
 
     def get_latest_weather_reports(self):
         try:
