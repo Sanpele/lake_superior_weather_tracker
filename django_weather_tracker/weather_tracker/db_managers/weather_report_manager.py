@@ -17,7 +17,7 @@ class WeatherReportManager:
             ).exists()
 
             if have_we_already_saved_today:
-                return False, "we already saved today bud :) :)"
+                return False, "we already saved today bud :)"
 
             WeatherReport.objects.bulk_create(weather_report_list)
             return True, "saved successfully"
