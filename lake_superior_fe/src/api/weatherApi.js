@@ -5,7 +5,7 @@ import { API_BASE_URL } from '../constants/config'
  * @returns {Promise<{ wind?: object, waves?: object, visibility?: object }>}
  */
 export async function getWeather() {
-  const res = await fetch(`${API_BASE_URL}/weather`)
+  const res = await fetch(`${API_BASE_URL}weather-report/`)
   if (!res.ok) throw new Error('Failed to fetch weather')
   return res.json()
 }

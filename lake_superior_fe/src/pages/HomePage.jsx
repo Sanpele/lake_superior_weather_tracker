@@ -8,7 +8,7 @@ function HomePage() {
   return (
     <main className="home-page">
       <h1>Lake Superior Weather</h1>
-      <LakeSuperiorMap />
+      <LakeSuperiorMap dailyReports={data?.daily_reports} />
       <WeatherPanel data={data} loading={loading} error={error} />
     </main>
   )

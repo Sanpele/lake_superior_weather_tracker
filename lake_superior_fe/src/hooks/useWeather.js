@@ -15,7 +15,21 @@ export function useWeather() {
     setError(null)
     getWeather()
       .then((d) => {
-        if (!cancelled) setData(d)
+        if (!cancelled) {
+          console.log('API Response:', d)
+          console.log('Daily Reports:', d?.daily_reports)
+          if (d?.daily_reports) {
+            d.daily_reports.forEach((report, idx) => {
+              console.log(`Report ${idx + 1} (${report.region}):`, {
+                wind_direction: report.wind_direction,
+                wind_speed: report.wind_speed,
+                wave_height: report.wave_height,
+                visibility: report.visibility
+              })
+            })
+          }
+          setData(d)
+        }
       })
       .catch((e) => {
         if (!cancelled) setError(e?.message ?? 'Failed to load weather')
