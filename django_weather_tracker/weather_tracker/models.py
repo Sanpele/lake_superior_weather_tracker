@@ -39,7 +39,6 @@ class WeatherReport(models.Model):
 
     link = models.URLField(max_length=255)
     weather_canada_id = models.CharField(max_length=255)
-    breaking_db_change = models.CharField(max_length=255, null=True)
 
     class Meta:
         constraints = [
