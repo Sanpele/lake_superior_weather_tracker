@@ -10,7 +10,7 @@ function LakeSuperiorMap({ dailyReports }) {
 
   return (
     <div className="lake-superior-map" aria-label="Map of Lake Superior">
-      <div style={{ position: 'relative', width: '100%', maxWidth: 800, margin: '0 auto' }}>
+      <div style={{ position: 'relative', width: '100%', maxWidth: 800, margin: '0.5rem auto' }}>
         {/* Static image - replace with your actual Lake Superior map image */}
         <img
           src="/lake-superior-map.png"
