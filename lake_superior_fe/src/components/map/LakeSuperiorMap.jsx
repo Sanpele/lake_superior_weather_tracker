@@ -1,3 +1,5 @@
+import WindArrowOverlay from './WindArrowOverlay'
+
 /**
  * Static image of Lake Superior with overlays for wind/waves/visibility.
  * Place your Lake Superior image in public/lake-superior-map.png (or update the path below).
@@ -57,7 +59,7 @@ function LakeSuperiorMap({ dailyReports }) {
             pointerEvents: 'none'
           }}
         >
-          {/* Overlays will be added here based on dailyReports */}
+          <WindArrowOverlay dailyReports={dailyReports} />
         </div>
       </div>
     </div>
