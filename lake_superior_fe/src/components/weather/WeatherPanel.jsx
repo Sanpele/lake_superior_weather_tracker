@@ -8,8 +8,8 @@ function WeatherPanel({ data, loading, error }) {
 
   // Sort reports to ensure eastern is first, western is second
   const sortedReports = [...data.daily_reports].sort((a, b) => {
-    if (a.region.toLowerCase().includes('eastern')) return -1
-    if (b.region.toLowerCase().includes('eastern')) return 1
+    if (a.region.toLowerCase().includes('eastern')) return 1
+    if (b.region.toLowerCase().includes('eastern')) return -1
     return 0
   })
 

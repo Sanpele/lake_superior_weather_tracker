@@ -3,47 +3,36 @@ import {
   getArrowSize,
   getArrowColor,
   getRegionBounds,
-  getGridSpacing,
-  isPointInPolygon,
-  getLakePolygon
+  getGridSpacing
 } from '../../utils/windUtils'
 
 /**
- * Renders a grid of wind arrows filling a specific region
- * Arrows only appear within the Lake Superior outline shape
+ * Renders a grid of wind arrows filling a specific region.
+ * Arrows are clipped to the lake shape by the parent's <clipPath>.
  */
 function WindArrow({ region, windDirection, windSpeed }) {
-  // Calculate arrow properties
   const degrees = directionToDegrees(windDirection)
   const arrowSize = getArrowSize(windSpeed)
   const color = getArrowColor(windSpeed)
   const bounds = getRegionBounds(region)
   const gridSpacing = getGridSpacing(windSpeed)
-  const lakePolygon = getLakePolygon(region)
-
-  // Convert degrees to radians for calculations
   const radians = (degrees * Math.PI) / 180
 
-  // Generate grid of arrow positions
   const arrows = []
   let arrowKey = 0
 
+  // Generate grid starting at each region's own boundary
   for (let y = bounds.minY; y <= bounds.maxY; y += gridSpacing) {
-    for (let x = bounds.minX; x <= bounds.maxX; x += gridSpacing) {
-      // Only add arrow if position is inside the lake polygon
-      if (!isPointInPolygon(x, y, lakePolygon)) {
-        continue
-      }
+    for (let x = bounds.minX; x < bounds.maxX; x += gridSpacing) {
 
-      // Start position for this arrow
       const startX = x
       const startY = y
 
-      // End position (arrow points in wind direction)
+      // Arrow endpoint — simple trig, no aspect ratio correction needed
       const endX = startX + arrowSize * Math.sin(radians)
       const endY = startY - arrowSize * Math.cos(radians)
 
-      // Arrowhead geometry
+      // Arrowhead
       const arrowheadSize = arrowSize * 0.3
       const arrowheadAngle = 30 * (Math.PI / 180)
 
@@ -63,21 +52,17 @@ function WindArrow({ region, windDirection, windSpeed }) {
 
   return (
     <g>
-      {/* Render all arrow instances */}
       {arrows.map((arrow) => (
         <g key={arrow.key}>
-          {/* Arrow shaft */}
           <line
             x1={arrow.line.x1}
             y1={arrow.line.y1}
             x2={arrow.line.x2}
             y2={arrow.line.y2}
             stroke={color}
-            strokeWidth="0.4"
+            strokeWidth="4"
             strokeLinecap="round"
           />
-
-          {/* Arrowhead */}
           <polygon
             points={arrow.arrowhead}
             fill={color}
@@ -89,7 +74,7 @@ function WindArrow({ region, windDirection, windSpeed }) {
       <text
         x={(bounds.minX + bounds.maxX) / 2}
         y={(bounds.minY + bounds.maxY) / 2}
-        fontSize="3"
+        fontSize="30"
         fill={color}
         textAnchor="middle"
         fontWeight="bold"
