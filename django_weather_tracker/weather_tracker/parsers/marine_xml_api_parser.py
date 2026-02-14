@@ -2,29 +2,14 @@ import re
 from datetime import datetime
 from typing import Any
 
+from weather_tracker.constants import MONTH_NAMES
 from weather_tracker.models import Region, ReportType, Category, WeatherReport
 from weather_tracker.parsers.generic_parser import GenericParser
-
-# Month name to number for "Issued DD Month YYYY"
-_MONTH_NAMES = [
-    "january",
-    "february",
-    "march",
-    "april",
-    "may",
-    "june",
-    "july",
-    "august",
-    "september",
-    "october",
-    "november",
-    "december",
-]
 
 
 class MarineXmlAPIParser(GenericParser):
 
-    def parse(self, raw_data):
+    def parse(self, raw_data) -> list[WeatherReport]:
 
         report_list = self.parse_webpage_and_create_reports(raw_data)
 
@@ -117,60 +102,7 @@ class MarineXmlAPIParser(GenericParser):
 
         return region
 
-    # ---- Summary parsing ----
-
-    _ISSUED_RE = re.compile(
-        r"(?:<br/>\s*)?Issued\s+(\d{1,2}):(\d{2})\s+(AM|PM)\s+EST\s+(\d{1,2})\s+(\w+)\s+(\d{4})\s*$",
-        re.IGNORECASE,
-    )
-    _WIND_RE = re.compile(
-        r"\bWind\s+([a-z]+(?:\s+[a-z]+)?)\s+(\d+(?:\.\d+)?)\s+knots\b",
-        re.IGNORECASE,
-    )
-    _VISIBILITY_RE = re.compile(
-        r"\bVisibility\s+(.+?)(?:\.\s*|$)",
-        re.IGNORECASE,
-    )
-    _FLOAT_RE = re.compile(r"\d+(?:\.\d+)?")
-
-    @staticmethod
-    def _parse_issued_line(text: str) -> dict[str, Any] | None:
-        """
-        Parse trailing 'Issued HH:MM AM/PM EST DD Month YYYY' from summary text.
-        Returns dict with issued_raw (str), issued_at (datetime | None), and body (rest of text).
-        """
-        text = (text or "").strip()
-        if not text:
-            return {"body": "", "issued_raw": "", "issued_at": None}
-        m = MarineXmlAPIParser._ISSUED_RE.search(text)
-        if not m:
-            return {"body": text, "issued_raw": "", "issued_at": None}
-        hour, minute, ampm, day, month_name, year = m.groups()
-        body = text[: m.start()].strip()
-        issued_raw = m.group(0).replace("<br/>", "").strip()
-        hour_i = int(hour)
-        if ampm.upper() == "PM" and hour_i != 12:
-            hour_i += 12
-        elif ampm.upper() == "AM" and hour_i == 12:
-            hour_i = 0
-        month_lower = month_name.lower()
-        try:
-            month_i = _MONTH_NAMES.index(month_lower) + 1
-        except ValueError:
-            month_i = 1
-        try:
-            issued_at = datetime(int(year), month_i, int(day), hour_i, int(minute))
-        except (ValueError, TypeError):
-            issued_at = None
-        return {"body": body, "issued_raw": issued_raw, "issued_at": issued_at}
-
-    def parse_summary(
-        self, summary: str, report_type: ReportType
-    ) -> dict[str, Any] | None:
-        """
-        Parse the summary text into a structured dict based on report_type.
-        Returns None for UNDEFINED or on parse failure.
-        """
+    def parse_summary(self, summary: str, report_type: ReportType) -> dict | None:
         if not (summary or "").strip():
             return None
         if report_type == ReportType.UNDEFINED:
@@ -191,10 +123,50 @@ class MarineXmlAPIParser(GenericParser):
             return None
         return None
 
+    _ISSUED_RE = re.compile(
+        r"(?:<br/>\s*)?Issued\s+(\d{1,2}):(\d{2})\s+(AM|PM)\s+EST\s+(\d{1,2})\s+(\w+)\s+(\d{4})\s*$",
+        re.IGNORECASE,
+    )
+    _WIND_RE = re.compile(
+        r"\bWind\s+([a-z]+(?:\s+[a-z]+)?)\s+(\d+(?:\.\d+)?)\s+knots\b",
+        re.IGNORECASE,
+    )
+    _VISIBILITY_RE = re.compile(
+        r"\bVisibility\s+(.+?)(?:\.\s*|$)",
+        re.IGNORECASE,
+    )
+    _FLOAT_RE = re.compile(r"\d+(?:\.\d+)?")
+
+    @staticmethod
+    def _parse_issued_line(text: str) -> dict | None:
+        text = (text or "").strip()
+        if not text:
+            return {"body": "", "issued_raw": "", "issued_at": None}
+        m = MarineXmlAPIParser._ISSUED_RE.search(text)
+        if not m:
+            return {"body": text, "issued_raw": "", "issued_at": None}
+        hour, minute, ampm, day, month_name, year = m.groups()
+        body = text[: m.start()].strip()
+        issued_raw = m.group(0).replace("<br/>", "").strip()
+        hour_i = int(hour)
+        if ampm.upper() == "PM" and hour_i != 12:
+            hour_i += 12
+        elif ampm.upper() == "AM" and hour_i == 12:
+            hour_i = 0
+        month_lower = month_name.lower()
+        try:
+            month_i = MONTH_NAMES.index(month_lower) + 1
+        except ValueError:
+            month_i = 1
+        try:
+            issued_at = datetime(int(year), month_i, int(day), hour_i, int(minute))
+        except (ValueError, TypeError):
+            issued_at = None
+        return {"body": body, "issued_raw": issued_raw, "issued_at": issued_at}
+
     def _extract_wind_direction_speed(
         self, text: str
     ) -> tuple[str | None, float | None]:
-        """Extract initial wind direction + speed (knots) from a detailed summary body."""
         m = self._WIND_RE.search(text or "")
         if not m:
             return None, None
@@ -206,15 +178,10 @@ class MarineXmlAPIParser(GenericParser):
         return direction, speed
 
     def _extract_visibility(self, text: str) -> str | None:
-        """Extract the first 'Visibility ...' clause from a detailed summary body."""
         m = self._VISIBILITY_RE.search(text or "")
         return m.group(1).strip() if m else None
 
     def _extract_max_wave_height(self, text: str) -> float | None:
-        """
-        Extract max wave height (metres) from a waves summary body by taking the max
-        numeric value found in the waves text (Issued removed).
-        """
         numbers = self._FLOAT_RE.findall(text or "")
         floats: list[float] = []
         for s in numbers:
@@ -224,18 +191,13 @@ class MarineXmlAPIParser(GenericParser):
                 continue
         return max(floats) if floats else None
 
-    def _parse_detailed_summary(self, summary: str) -> dict[str, Any]:
-        """
-        Parse detailed forecast: wind paragraph, precipitation/visibility/freezing-spray
-        blocks (double-space separated), and trailing Issued line.
-        """
+    def _parse_detailed_summary(self, summary: str) -> dict:
         out = self._parse_issued_line(summary)
         body = out["body"].replace("\n", " ").strip()
 
         wind_direction, wind_speed = self._extract_wind_direction_speed(body)
         visibility = self._extract_visibility(body)
 
-        # Split on double space into blocks; first block is wind, rest are conditions
         blocks = [b.strip() for b in re.split(r"\s{2,}", body) if b.strip()]
         wind_text = ""
         conditions: list[str] = []
@@ -245,11 +207,9 @@ class MarineXmlAPIParser(GenericParser):
             else:
                 conditions.append(block)
         return {
-            # critical fields for detailed summaries
             "wind_direction": wind_direction,
             "wind_speed": wind_speed,
             "visibility": visibility,
-            # raw-ish structured pieces
             "wind": wind_text,
             "conditions": conditions,
             "issued_raw": out["issued_raw"],
@@ -257,12 +217,7 @@ class MarineXmlAPIParser(GenericParser):
             "raw": summary,
         }
 
-    def _parse_waves_summary(self, summary: str) -> dict[str, Any]:
-        """
-        Parse waves summary: wave height phrases (e.g. "1 metre building to 1.5 Tuesday
-        morning") and optional Issued line. Returns wave_phrases (list of str) and
-        parsed heights when detectable (e.g. {"min": 1, "max": 1.5, "unit": "m"}).
-        """
+    def _parse_waves_summary(self, summary: str) -> dict:
         out = self._parse_issued_line(summary)
         body = out["body"].replace("\n", " ").strip()
         # Split into sentences (period or <br/>); keep only "Waves ..." phrases
@@ -271,8 +226,6 @@ class MarineXmlAPIParser(GenericParser):
             p.strip() for p in parts if p.strip().lower().startswith("waves ")
         ]
 
-        # Extract all numeric values from the waves body and take the max.
-        # (No iteration over regex match objects; the regex is compiled and used via findall.)
         numbers = self._FLOAT_RE.findall(body)
         heights = []
         for s in numbers:
@@ -283,25 +236,19 @@ class MarineXmlAPIParser(GenericParser):
         max_wave_height = max(heights) if heights else None
 
         return {
-            # raw-ish structured pieces
             "wave_phrases": wave_phrases,
-            # critical field for waves summaries
             "max_wave_height": max_wave_height,
             "issued_raw": out["issued_raw"],
             "issued_at": out["issued_at"],
             "raw": summary,
         }
 
-    def _parse_extended_summary(self, summary: str) -> dict[str, Any]:
-        """
-        Parse extended forecast: day blocks "DayName: Wind ..." separated by <br/>,
-        then Issued line.
-        """
+    def _parse_extended_summary(self, summary: str) -> dict:
         out = self._parse_issued_line(summary)
         body = out["body"].replace("\n", " ")
         # Split by <br/> and parse "Weekday: Wind ..." or "Weekday: Wind light."
         day_re = re.compile(r"^(\w+):\s*(.+)$", re.IGNORECASE)
-        days: list[dict[str, str]] = []
+        days = []
         for segment in re.split(r"<br/>\s*", body):
             segment = segment.strip()
             if not segment or segment.lower().startswith("issued"):
@@ -312,7 +259,6 @@ class MarineXmlAPIParser(GenericParser):
             elif segment:
                 days.append({"day": "", "wind": segment})
         return {
-            # raw-ish structured pieces
             "days": days,
             "issued_raw": out["issued_raw"],
             "issued_at": out["issued_at"],
@@ -320,20 +266,16 @@ class MarineXmlAPIParser(GenericParser):
         }
 
     def _parse_freezing_spray_warning_summary(self, summary: str) -> dict[str, Any]:
-        """Parse freezing spray warning: primarily Issued line."""
         out = self._parse_issued_line(summary)
         return {
-            # raw-ish structured pieces
             "issued_raw": out["issued_raw"],
             "issued_at": out["issued_at"],
             "raw": summary,
         }
 
     def _parse_gale_warning_summary(self, summary: str) -> dict[str, Any]:
-        """Parse gale warning: primarily Issued line."""
         out = self._parse_issued_line(summary)
         return {
-            # raw-ish structured pieces
             "issued_raw": out["issued_raw"],
             "issued_at": out["issued_at"],
             "raw": summary,

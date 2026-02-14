@@ -3,9 +3,7 @@ import logging
 import xmltodict
 
 from weather_tracker.exceptions import ScraperError
-from weather_tracker.utils import (
-    get_request,
-)
+from weather_tracker.utils import get_request
 
 
 class GovWeatherRequest:

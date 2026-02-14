@@ -39,8 +39,10 @@ class WeatherReportManager:
             return False
 
     def build_daily_report_summary(self, weather_reports):
-
         if len(weather_reports) != 3:
+            self.logger.info(
+                f"something went wrong, not expected number of weather reports {weather_reports}"
+            )
             return None
 
         region = weather_reports[0].region
