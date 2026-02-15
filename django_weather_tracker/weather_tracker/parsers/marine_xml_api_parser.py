@@ -131,6 +131,10 @@ class MarineXmlAPIParser(GenericParser):
         r"\bWind\s+([a-z]+(?:\s+[a-z]+)?)\s+(\d+(?:\.\d+)?)\s+knots\b",
         re.IGNORECASE,
     )
+    _WIND_COMPLEX_RE = re.compile(
+        r"\bWind\s+.*?(?:becoming\s+)?([a-z]+(?:\s+[a-z]+)?)\s+(\d+(?:\.\d+)?)\s+knots",
+        re.IGNORECASE,
+    )
     _VISIBILITY_RE = re.compile(
         r"\bVisibility\s+(.+?)(?:\.\s*|$)",
         re.IGNORECASE,
@@ -140,41 +144,69 @@ class MarineXmlAPIParser(GenericParser):
     @staticmethod
     def _parse_issued_line(text: str) -> dict | None:
         text = (text or "").strip()
+
         if not text:
             return {"body": "", "issued_raw": "", "issued_at": None}
         m = MarineXmlAPIParser._ISSUED_RE.search(text)
         if not m:
             return {"body": text, "issued_raw": "", "issued_at": None}
+
         hour, minute, ampm, day, month_name, year = m.groups()
         body = text[: m.start()].strip()
         issued_raw = m.group(0).replace("<br/>", "").strip()
         hour_i = int(hour)
+
         if ampm.upper() == "PM" and hour_i != 12:
             hour_i += 12
         elif ampm.upper() == "AM" and hour_i == 12:
             hour_i = 0
+
         month_lower = month_name.lower()
+
         try:
             month_i = MONTH_NAMES.index(month_lower) + 1
         except ValueError:
             month_i = 1
+
         try:
             issued_at = datetime(int(year), month_i, int(day), hour_i, int(minute))
         except (ValueError, TypeError):
             issued_at = None
+
         return {"body": body, "issued_raw": issued_raw, "issued_at": issued_at}
 
     def _extract_wind_direction_speed(
         self, text: str
     ) -> tuple[str | None, float | None]:
         m = self._WIND_RE.search(text or "")
+
         if not m:
-            return None, None
+            return self._fallback_wind_direction_speed(text)
+
         direction = m.group(1).strip().lower()
+
         try:
             speed = float(m.group(2))
         except ValueError:
             speed = None
+
+        return direction, speed
+
+    def _fallback_wind_direction_speed(
+        self, text: str
+    ) -> tuple[str | None, float | None]:
+        m = self._WIND_COMPLEX_RE.search(text or "")
+
+        if not m:
+            return None, None
+
+        direction = m.group(1).strip().lower()
+
+        try:
+            speed = float(m.group(2))
+        except ValueError:
+            speed = None
+
         return direction, speed
 
     def _extract_visibility(self, text: str) -> str | None:
@@ -189,6 +221,7 @@ class MarineXmlAPIParser(GenericParser):
                 floats.append(float(s))
             except ValueError:
                 continue
+
         return max(floats) if floats else None
 
     def _parse_detailed_summary(self, summary: str) -> dict:
@@ -222,9 +255,7 @@ class MarineXmlAPIParser(GenericParser):
         body = out["body"].replace("\n", " ").strip()
         # Split into sentences (period or <br/>); keep only "Waves ..." phrases
         parts = re.split(r"\.\s+|<br/>\s*", body)
-        wave_phrases = [
-            p.strip() for p in parts if p.strip().lower().startswith("waves ")
-        ]
+        wave_phrases = [p.strip() for p in parts if "waves" in p.strip().lower()]
 
         numbers = self._FLOAT_RE.findall(body)
         heights = []
@@ -251,13 +282,17 @@ class MarineXmlAPIParser(GenericParser):
         days = []
         for segment in re.split(r"<br/>\s*", body):
             segment = segment.strip()
+
             if not segment or segment.lower().startswith("issued"):
                 continue
+
             mo = day_re.match(segment)
+
             if mo:
                 days.append({"day": mo.group(1), "wind": mo.group(2).strip()})
             elif segment:
                 days.append({"day": "", "wind": segment})
+
         return {
             "days": days,
             "issued_raw": out["issued_raw"],
