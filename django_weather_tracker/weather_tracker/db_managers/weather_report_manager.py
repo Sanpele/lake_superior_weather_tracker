@@ -27,11 +27,11 @@ class WeatherReportManager:
 
     def get_latest_weather_reports(self):
         try:
-            latest_published_time = WeatherReport.objects.aggregate(
-                max_pt=Max("published_time")
+            latest_updated_time = WeatherReport.objects.aggregate(
+                max_pt=Max("updated_time")
             )["max_pt"]
             weather_reports = WeatherReport.objects.filter(
-                published_time=latest_published_time
+                updated_time=latest_updated_time
             )
             return weather_reports
         except Exception as e:
