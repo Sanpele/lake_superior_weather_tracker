@@ -14,7 +14,11 @@ SECRET_KEY = "django-insecure-s(cu(qudl1bp+o&d+(=537ae^wg*qv)tam_-d0-3f+$$v=13*c
 
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = ["127.0.0.1", "hpseven.pythonanywhere.com"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "hpseven.pythonanywhere.com",
+    "vercellakesuperiorweathertracker.vercel.app",
+]
 
 # Application definition
 
