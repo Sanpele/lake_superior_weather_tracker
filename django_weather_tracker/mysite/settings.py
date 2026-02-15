@@ -17,7 +17,6 @@ DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "hpseven.pythonanywhere.com",
-    "vercellakesuperiorweathertracker.vercel.app",
 ]
 
 # Application definition
@@ -112,6 +111,7 @@ else:  # prod / PythonAnywhere
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://vercellakesuperiorweathertracker.vercel.app",
 ]
 
 # Internationalization
