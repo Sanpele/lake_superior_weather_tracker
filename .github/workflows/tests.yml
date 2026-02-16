@@ -23,8 +23,6 @@ jobs:
     
     - name: Run tests with tox
       working-directory: ./django_weather_tracker
-      env: 
-        DATABASE_URL: sqlite:///test_db.sqlite3
       run: tox -e py313
     
     - name: Upload coverage reports
