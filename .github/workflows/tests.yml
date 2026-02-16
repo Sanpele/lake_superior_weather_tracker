@@ -23,11 +23,4 @@ jobs:
     
     - name: Run tests with tox
       working-directory: ./django_weather_tracker
-      run: tox -e py313
-    
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v4
-      if: success()
-      with:
-        file: ./django_weather_tracker/coverage.xml
-        fail_ci_if_error: true 
+      run: tox -e py313 
