@@ -46,7 +46,9 @@ class Command(BaseCommand):
         dedupe = options["dedupe"]
 
         by_type = {}
-        for report in WeatherReport.objects.all().order_by("report_type", "published_time"):
+        for report in WeatherReport.objects.all().order_by(
+            "report_type", "published_time"
+        ):
             rtype = report.report_type
             if rtype not in by_type:
                 by_type[rtype] = []
