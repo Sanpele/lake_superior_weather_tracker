@@ -111,7 +111,7 @@ else:  # prod / PythonAnywhere
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://vercellakesuperiorweathertracker.vercel.app",
+    "https://lake-superior-weather-tracker.vercel.app",
 ]
 
 # Internationalization
