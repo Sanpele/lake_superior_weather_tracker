@@ -14,6 +14,5 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install black==25.1.0
-      - run: black --version
       - run: black --check .
 
