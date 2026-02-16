@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install tox
+    
+    - name: Run tests with tox
+      working-directory: ./django_weather_tracker
+      run: tox -e py313
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      if: success()
+      with:
+        file: ./django_weather_tracker/coverage.xml
+        fail_ci_if_error: true 
