@@ -1,5 +1,6 @@
 import os
 
+import structlog
 from environs import Env
 
 env = Env()
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "weather_tracker",
     "corsheaders",
+    "django_structlog",
 ]
 
 MIDDLEWARE = [
@@ -41,6 +43,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_structlog.middlewares.RequestMiddleware",
 ]
 
 ROOT_URLCONF = "mysite.urls"
@@ -74,39 +77,77 @@ DATABASES = {
 
 LOG_LEVEL = os.getenv("DJANGO_LOG_LEVEL", "INFO")
 ENV = os.getenv("DJANGO_ENV", "local")
+IS_LOCAL = ENV.lower() == "local"
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "standard": {
-            "format": "[{asctime}] {levelname} {name}: {message}",
-            "style": "{",
+        "plain_console": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.dev.ConsoleRenderer(),
+        },
+        "key_value": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.processors.KeyValueRenderer(
+                key_order=["timestamp", "level", "event", "logger"]
+            ),
         },
     },
     "handlers": {},
-    "root": {
-        "handlers": [],
-        "level": LOG_LEVEL,
-    },
+    "loggers": {},
 }
 
-if ENV == "local":
-    LOGGING["handlers"]["console"] = {
-        "class": "logging.StreamHandler",
-        "formatter": "standard",
+if IS_LOCAL:
+    LOGGING["handlers"] = {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "plain_console",
+        }
     }
-    LOGGING["root"]["handlers"].append("console")
+    LOGGING["loggers"] = {
+        "django_structlog": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    }
 
-else:  # prod / PythonAnywhere
-    LOGGING["handlers"]["file"] = {
-        "class": "logging.handlers.RotatingFileHandler",
-        "filename": f"{BASE_DIR}/django.log",
-        "maxBytes": 10 * 1024 * 1024,
-        "backupCount": 5,
-        "formatter": "standard",
+else:
+    LOGGING["handlers"] = {
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": f"{BASE_DIR}/django.log",
+            "maxBytes": 10 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "key_value",
+        }
     }
-    LOGGING["root"]["handlers"].append("file")
+    LOGGING["loggers"] = {
+        "django_structlog": {
+            "handlers": ["file"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    }
+
+structlog.configure(
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.stdlib.filter_by_level,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.stdlib.ProcessorFormatter.wrap_for_formatter,  # <-- hands off to stdlib
+    ],
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    wrapper_class=structlog.stdlib.BoundLogger,
+    cache_logger_on_first_use=True,
+)
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

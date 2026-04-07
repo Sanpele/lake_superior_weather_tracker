@@ -9,3 +9,4 @@ djangorestframework==3.16.1
 django-cors-headers==4.9.0
 pre_commit==4.5.1
 tox==4.36.0
+django-structlog==10.0.0
