@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+import structlog
 from django.http import JsonResponse
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -11,6 +12,8 @@ from weather_tracker.scraping_logic.weather_web_scraper import GovWeatherRequest
 from weather_tracker.serializers.weather_report_serializer import (
     WeatherReportSerializer,
 )
+
+logger = structlog.get_logger(__name__)
 
 
 class WeatherForecastView(APIView):
@@ -36,6 +39,8 @@ class DailyWeatherReportView(APIView):
     http_method_names = ["get"]
 
     def get(self, request: Request):
+        logger.info("Daily Weather Report")
+
         latest_reports = WeatherReportManager().get_latest_weather_reports()
 
         grouped = defaultdict(list)

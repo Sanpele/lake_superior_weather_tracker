@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import structlog
 from environs import Env
@@ -79,7 +80,7 @@ LOG_LEVEL = os.getenv("DJANGO_LOG_LEVEL", "INFO")
 ENV = os.getenv("DJANGO_ENV", "local")
 IS_LOCAL = ENV.lower() == "local"
 
-LOGGING = {
+LOGGING: dict[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
@@ -94,42 +95,69 @@ LOGGING = {
             ),
         },
     },
-    "handlers": {},
-    "loggers": {},
+    "handlers": {
+        "null": {
+            "class": "logging.NullHandler",
+        },
+    },
+    "loggers": {
+        "django.server": {
+            "handlers": ["null"],
+            "propagate": False,
+        },
+    },
 }
 
 if IS_LOCAL:
-    LOGGING["handlers"] = {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "plain_console",
+    LOGGING["handlers"].update(
+        {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "plain_console",
+            }
         }
-    }
-    LOGGING["loggers"] = {
-        "django_structlog": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-    }
+    )
+    LOGGING["loggers"].update(
+        {
+            "django_structlog": {
+                "handlers": ["console"],
+                "level": LOG_LEVEL,
+                "propagate": False,
+            },
+            "": {
+                "handlers": ["console"],
+                "level": LOG_LEVEL,
+                "propagate": False,
+            },
+        }
+    )
 
 else:
-    LOGGING["handlers"] = {
-        "file": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": f"{BASE_DIR}/django.log",
-            "maxBytes": 10 * 1024 * 1024,
-            "backupCount": 5,
-            "formatter": "key_value",
+    LOGGING["handlers"].update(
+        {
+            "file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": f"{BASE_DIR}/django.log",
+                "maxBytes": 10 * 1024 * 1024,
+                "backupCount": 5,
+                "formatter": "key_value",
+            }
         }
-    }
-    LOGGING["loggers"] = {
-        "django_structlog": {
-            "handlers": ["file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-    }
+    )
+    LOGGING["loggers"].update(
+        {
+            "django_structlog": {
+                "handlers": ["file"],
+                "level": LOG_LEVEL,
+                "propagate": False,
+            },
+            "": {
+                "handlers": ["file"],
+                "level": LOG_LEVEL,
+                "propagate": False,
+            },
+        }
+    )
 
 structlog.configure(
     processors=[
