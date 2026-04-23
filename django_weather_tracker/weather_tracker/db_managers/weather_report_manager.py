@@ -38,9 +38,8 @@ class WeatherReportManager:
             self.logger.exception(e)
             return False
 
-    def build_daily_report_summary(self, weather_reports):
-        region = weather_reports[0].region
-
+    @staticmethod
+    def build_daily_report_summary(weather_reports: list[WeatherReport]):
         wave_report = None
         detailed_report = None
         extended_report = None
@@ -53,9 +52,9 @@ class WeatherReportManager:
                 wave_report = report
 
         return {
-            "region": region,
-            "wind_direction": detailed_report.wind_direction,
-            "wind_speed": detailed_report.wind_speed_knots,
-            "wave_height": wave_report.max_wave_height_m,
-            "visibility": extended_report.visibility_text,
+            "region": weather_reports[0].region,
+            "wind_direction": getattr(detailed_report, "wind_direction"),
+            "wind_speed": getattr(detailed_report, "wind_speed_knots"),
+            "wave_height": getattr(wave_report, "max_wave_height_m"),
+            "visibility": getattr(extended_report, "visibility_text"),
         }
