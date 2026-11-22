@@ -1,19 +1,15 @@
 from django.db import models
 
+from weather_tracker.bulletin_interpretation import (
+    Region,
+    ReportType,
+    WarningStatus,
+    WindState,
+)
 
-class Region(models.TextChoices):
-    EASTERN_LAKE_SUPERIOR = "eastern_lake_superior"
-    WESTERN_LAKE_SUPERIOR = "western_lake_superior"
-    UNDEFINED = "undefined"
 
-
-class ReportType(models.TextChoices):
-    DETAILED = "detailed"
-    WAVES = "waves"
-    EXTENDED = "extended"
-    FREEZING_SPRAY_WARNING = "FREEZING_SPRAY_WARNING"
-    GALE_WARNING = "GALE_WARNING"
-    UNDEFINED = "undefined"
+def _choices(vocabulary):
+    return [(item.value, item.name.replace("_", " ").title()) for item in vocabulary]
 
 
 class Category(models.TextChoices):
@@ -22,8 +18,8 @@ class Category(models.TextChoices):
 
 
 class WeatherReport(models.Model):
-    region = models.CharField(max_length=30, choices=Region.choices)
-    report_type = models.CharField(max_length=40, choices=ReportType.choices)
+    region = models.CharField(max_length=30, choices=_choices(Region))
+    report_type = models.CharField(max_length=40, choices=_choices(ReportType))
     title = models.CharField(max_length=255)
     date = models.DateField()
     published_time = models.DateTimeField()
@@ -31,7 +27,15 @@ class WeatherReport(models.Model):
     category = models.CharField(max_length=20, choices=Category.choices)
     summary = models.TextField()
 
+    # Blank for anything that is not a Marine warning, so it stays in the unique key
+    warning_status = models.CharField(
+        max_length=10, choices=_choices(WarningStatus), blank=True, default=""
+    )
+
     # Parsed "critical" fields from summary (nullable because they depend on report_type)
+    wind_state = models.CharField(
+        max_length=10, choices=_choices(WindState), default=WindState.UNKNOWN.value
+    )
     wind_direction = models.CharField(max_length=32, null=True, blank=True)
     wind_speed_knots = models.FloatField(null=True, blank=True)
     max_wave_height_m = models.FloatField(null=True, blank=True)
@@ -43,7 +47,7 @@ class WeatherReport(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["region", "report_type", "published_time"],
-                name="unique_region_and_report_type",
+                fields=["region", "report_type", "warning_status", "published_time"],
+                name="unique_region_type_status_published",
             )
         ]

@@ -6,7 +6,10 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from weather_tracker.db_managers.weather_report_manager import WeatherReportManager
+from weather_tracker.db_managers.weather_report_manager import (
+    DAILY_REPORT_REGIONS,
+    WeatherReportManager,
+)
 from weather_tracker.parsers.marine_xml_api_parser import MarineXmlAPIParser
 from weather_tracker.scraping_logic.weather_web_scraper import GovWeatherRequest
 from weather_tracker.serializers.weather_report_serializer import (
@@ -46,7 +49,8 @@ class DailyWeatherReportView(APIView):
         grouped = defaultdict(list)
 
         for row in latest_reports:
-            grouped[row.region].append(row)
+            if row.region in DAILY_REPORT_REGIONS:
+                grouped[row.region].append(row)
 
         response = []
         for region, rows in grouped.items():
