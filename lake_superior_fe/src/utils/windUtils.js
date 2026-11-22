@@ -34,6 +34,33 @@ export function directionToDegrees(direction) {
 }
 
 /**
+ * Only a reported wind has a direction an arrow can honestly show
+ * @param {{wind_state: string}} report - Daily report for a region
+ * @returns {boolean} Whether to draw wind arrows
+ */
+export function hasWindArrows(report) {
+  return report.wind_state === 'reported'
+}
+
+/**
+ * Describe a region's opening wind for display
+ * @param {{wind_state: string, wind_direction: ?string, wind_speed: ?number}} report
+ * @returns {string} Display text
+ */
+export function describeWind(report) {
+  switch (report.wind_state) {
+    case 'reported':
+      return `${report.wind_direction} ${report.wind_speed} kt`
+    case 'light':
+      return 'Light'
+    case 'variable':
+      return `Variable ${report.wind_speed} kt`
+    default:
+      return 'N/A'
+  }
+}
+
+/**
  * Calculate individual arrow size based on wind speed
  * Stronger winds = larger arrows
  * @param {number|string} windSpeed - Wind speed in knots

@@ -1,0 +1,366 @@
+{
+ "forecasts": [
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind northwest 25 knots diminishing to north 15 early Thursday\nmorning and to light near noon Thursday.  Scattered flurries tonight and Thursday\nmorning.      <br/>Issued 06:30  PM EDT 11 March 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "northwest",
+    "wind_speed_knots": 25,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind south 25 knots increasing to southwest 30 to 35 early this\nmorning then diminishing to west 20 to 25 near noon. Wind diminishing to south\n10 early this evening then increasing to southwest 20 to 25 late this evening.\nWind veering to west 30 Monday morning then diminishing to northwest 15 near\nnoon Monday. Wind veering to north 10 to 15 Monday evening.  Periods of snow or rain this morning. Periods of rain\ntonight and Monday morning.      <br/>Issued 03:00  AM EDT 08 March 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "south",
+    "wind_speed_knots": 25,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light becoming southeast 10 knots this afternoon then\nincreasing to southeast 20 this evening. Wind increasing to east 30 late\novernight then backing to northeast 25 Friday morning. Wind backing to north 25\nFriday afternoon.  Snow beginning near midnight changing to scattered flurries\nnear noon Friday. Visibility 1 mile or less in snow.      <br/>Issued 10:30  AM EDT 12 March 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind south 20 knots veering to southwest 25 early this morning\nthen to northwest 20 near noon. Wind veering to north 15 early this evening then\nto northeast 15 near midnight. Wind northeast 15 Tuesday.  Scattered showers and occasional fog patches ending this\nmorning. Scattered flurries overnight and Tuesday morning.      <br/>Issued 03:00  AM EDT 09 March 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "south",
+    "wind_speed_knots": 20,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind west 25 knots backing to southwest 20 this evening then\nincreasing to west 30 early Monday morning. Wind diminishing to northwest 20\nnear noon Monday and to north 10 Monday evening.  Scattered showers overnight and Monday\nmorning.      <br/>Issued 06:30  PM EDT 08 March 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "west",
+    "wind_speed_knots": 25,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind north 10 knots becoming light this morning then becoming\nsouthwest 15 near noon. Wind diminishing to light near midnight then increasing\nto northeast 25 Sunday morning. Wind increasing to northeast 35 Sunday\nevening.  Periods of snow Sunday afternoon and evening. Visibility 1\nmile or less in snow.      <br/>Issued 03:00  AM EDT 14 March 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "north",
+    "wind_speed_knots": 10,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind variable 10 knots increasing to northeast 20 to 25 late\nthis evening then backing to north 20 to 25 Thursday morning. Wind diminishing\nto north 15 Thursday evening.  Snow overnight and Thursday morning. Visibility 1 mile or\nless in snow.      <br/>Issued 06:30  PM EDT 25 March 2026",
+   "expected": {
+    "wind_state": "variable",
+    "wind_direction": null,
+    "wind_speed_knots": 10,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind variable 10 knots becoming southeast 10 near midnight then\nincreasing to southeast 20 late overnight. Wind diminishing to variable 10\nWednesday evening.  Snow overnight and Wednesday. Visibility 1 mile or less in\nsnow.      <br/>Issued 06:30  PM EDT 24 March 2026",
+   "expected": {
+    "wind_state": "variable",
+    "wind_direction": null,
+    "wind_speed_knots": 10,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light increasing to northeast 20 knots early this morning\nand to northeast 35 early this evening. Wind backing to north 40 Monday\nmorning.  Periods of snow this afternoon tonight and Monday.\nVisibility 1 mile or less in snow.    Risk of freezing spray late this afternoon and this evening.\nModerate freezing spray beginning near midnight except severe Monday morning and\nafternoon.  <br/>Issued 03:00  AM EDT 15 March 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind southwest 30 to 35 knots diminishing to west 25 this\nmorning then backing to southwest 20 this afternoon. Wind diminishing to\nsouthwest 15 early this evening then increasing to southwest 20 to 25 near\nmidnight. Wind veering to west 30 Monday morning then diminishing to northwest\n15 near noon Monday. Wind veering to north 15 Monday evening.  Periods of snow or rain this morning. Periods of rain\ntonight.      <br/>Issued 03:00  AM EDT 08 March 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "southwest",
+    "wind_speed_knots": 35,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind east 10 knots except light near the south end. Wind\nbecoming light near midnight then becoming southwest 10 Monday afternoon. Wind\nincreasing to southwest 20 Monday evening.  Scattered showers ending overnight with a risk of\nthunderstorms. Fog patches.      <br/>Issued 06:30  PM EDT 12 July 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "east",
+    "wind_speed_knots": 10,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind southeast 10 knots tonight and Monday.  Scattered showers Monday evening with a risk of\nthunderstorms. Fog patches.      <br/>Issued 06:30  PM EDT 24 May 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "southeast",
+    "wind_speed_knots": 10,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light today tonight and Wednesday.  Scattered showers Wednesday. Fog\npatches.      <br/>Issued 03:00  AM EDT 23 June 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light tonight and Wednesday.  Scattered showers Wednesday. Fog patches forming late\novernight.      <br/>Issued 06:30  PM EDT 23 June 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light tonight and Saturday.        <br/>Issued 06:30  PM EDT 26 June 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind southwest 15 knots today tonight and\nThursday.  Scattered showers tonight with a risk of thunderstorms. Fog\npatches.      <br/>Issued 03:00  AM EDT 01 July 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "southwest",
+    "wind_speed_knots": 15,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light tonight and Friday.  Fog patches.      <br/>Issued 06:30  PM EDT 02 July 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light tonight and Thursday.  Fog patches.      <br/>Issued 06:30  PM EDT 08 July 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light becoming variable 10 knots late overnight then\nincreasing to south 15 Sunday morning. Wind increasing to south 20 Sunday\nevening.  Flurries overnight and Sunday.      <br/>Issued 06:30  PM EST 07 February 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind variable 15 knots diminishing to light this evening then\nincreasing to south 15 late overnight. Wind increasing to southwest 25 Monday\nmorning then veering to west 25 Monday evening.  Scattered showers overnight and Monday.      <br/>Issued 06:30  PM EDT 03 May 2026",
+   "expected": {
+    "wind_state": "variable",
+    "wind_direction": null,
+    "wind_speed_knots": 15,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind variable 10 knots except north 20 near the west end. Wind\nincreasing to northeast 20 near midnight then backing to north 25 early Tuesday\nmorning except variable 10 over eastern sections. Wind becoming northwest 25\nnear noon Tuesday.  Rain overnight and Tuesday morning with a risk of\nthunderstorms. Fog patches dissipating Tuesday afternoon.      <br/>Issued 06:30  PM EDT 18 May 2026",
+   "expected": {
+    "wind_state": "variable",
+    "wind_direction": null,
+    "wind_speed_knots": 10,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light tonight and Tuesday.        <br/>Issued 06:30  PM EDT 01 June 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind variable 10 knots tonight and Thursday.        <br/>Issued 06:30  PM EDT 02 September 2026",
+   "expected": {
+    "wind_state": "variable",
+    "wind_direction": null,
+    "wind_speed_knots": 10,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind light tonight and Sunday.        <br/>Issued 06:30  PM EDT 26 September 2026",
+   "expected": {
+    "wind_state": "light",
+    "wind_direction": null,
+    "wind_speed_knots": null,
+    "visibility": null
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind northwest 15 knots diminishing to southwest 10 this evening\nthen increasing to south 15 near midnight. Wind veering to west 15 near noon\nTuesday then increasing to north 35 Tuesday evening.  Snow beginning overnight changing to scattered flurries\nnear noon Tuesday. Visibility 1 mile or less in snow.    Freezing spray beginning Tuesday evening.  <br/>Issued 06:30  PM EST 12 January 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "northwest",
+    "wind_speed_knots": 15,
+    "visibility": "1 mile or less in snow"
+   }
+  },
+  {
+   "title": "Forecast for Today Tonight and Tuesday. - Eastern Lake Superior",
+   "text": "Wind north 25 knots diminishing to north 15 near midnight and to\nvariable 10 early Thursday morning. Wind becoming south 10 near noon Thursday\nthen increasing to south 20 Thursday afternoon.  Flurries Thursday late in the day. Visibility 1 mile or\nless in flurries.    Freezing spray ending near midnight. Risk of freezing spray\nThursday late in the day.  <br/>Issued 06:30  PM EST 14 January 2026",
+   "expected": {
+    "wind_state": "reported",
+    "wind_direction": "north",
+    "wind_speed_knots": 25,
+    "visibility": "1 mile or less in flurries"
+   }
+  }
+ ],
+ "waves": [
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Over open water waves 1 to 1.5 metres building to 2 to 3 early\nthis morning then subsiding to 2 early this afternoon. Waves subsiding to 1 to\n1.5 early this evening and to less than 0.5 Monday morning.<br/>Issued 03:00  AM EDT 08 March 2026",
+   "expected_peak_m": 3.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 0.5 metres or less building to 0.5 to 1 this evening then\nsubsiding to 0.5 or less Saturday morning. Waves building to 0.5 to 1 Saturday\nevening.<br/>Issued 03:00  AM EDT 10 April 2026",
+   "expected_peak_m": 1.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 0.5 to 1 metre building to 2 near noon then subsiding to 1\nto 1.5 near midnight. Waves subsiding to 0.5 Tuesday morning then building to 1\nTuesday afternoon.<br/>Issued 03:00  AM EDT 06 April 2026",
+   "expected_peak_m": 2.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 0.5 metres or less.<br/>Issued 06:30  PM EDT 14 April 2026",
+   "expected_peak_m": 0.5
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 2 to 3 metres subsiding to 1.5 Thursday afternoon and to 1\nThursday evening.<br/>Issued 06:30  PM EDT 08 April 2026",
+   "expected_peak_m": 3.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 1.5 metres subsiding to 0.5 to 1 this evening then building\nto 2 near noon Monday.<br/>Issued 06:30  PM EDT 05 April 2026",
+   "expected_peak_m": 2.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 2 metres building to 2 to 3 near noon then subsiding to 1\nto 1.5 Thursday afternoon.<br/>Issued 03:00  AM EDT 08 April 2026",
+   "expected_peak_m": 3.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 1 metre subsiding to 0.5 or less early this\nmorning.<br/>Issued 03:00  AM EDT 29 April 2026",
+   "expected_peak_m": 1.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 1 metre building to 2 late overnight and to 2 to 3\nWednesday afternoon.<br/>Issued 06:30  PM EDT 07 April 2026",
+   "expected_peak_m": 3.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 1.5 to 2 metres.<br/>Issued 03:00  AM EDT 20 April 2026",
+   "expected_peak_m": 2.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Over open water waves less than 0.5 metres building to 0.5 this\nafternoon and to 1 this evening.<br/>Issued 03:00  AM EDT 27 March 2026",
+   "expected_peak_m": 1.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves less than 0.5 metres.<br/>Issued 03:00  AM EDT 05 June 2026",
+   "expected_peak_m": 0.5
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves less than 0.5 metres building to 1 near noon\nSunday.<br/>Issued 03:00  AM EDT 27 June 2026",
+   "expected_peak_m": 1.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 0.5 metres.<br/>Issued 06:30  PM EDT 06 May 2026",
+   "expected_peak_m": 0.5
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 0.5 to 1 metre.<br/>Issued 06:30  PM EDT 05 May 2026",
+   "expected_peak_m": 1.0
+  },
+  {
+   "title": "Waves for Today Tonight and Tuesday. - Western Lake Superior",
+   "text": "Waves 1 metre.<br/>Issued 06:30  PM EDT 12 May 2026",
+   "expected_peak_m": 1.0
+  }
+ ],
+ "extended": [
+  {
+   "title": "Extended Forecast - Eastern Lake Superior",
+   "text": "Thursday: Wind northwest 20 knots diminishing to light\n in the morning then increasing to southeast 20 late in the day.<br/>Friday: Wind northeast 35 knots diminishing to\n northeast 25.<br/>Saturday: Wind northwest 15 knots diminishing to\n light.<br/>Issued 03:00  AM EDT 10 March 2026",
+   "expected_days": [
+    "Thursday",
+    "Friday",
+    "Saturday"
+   ]
+  },
+  {
+   "title": "Extended Forecast - Eastern Lake Superior",
+   "text": "Friday: Wind southeast 20 knots increasing to northeast\n 35 in the morning then diminishing to north 20 late in the day.<br/>Saturday: Wind light becoming south 15 knots late in\n the day.<br/>Sunday: Wind northeast 25 knots increasing to northeast\n 30 late in the day.<br/>Issued 03:00  AM EDT 11 March 2026",
+   "expected_days": [
+    "Friday",
+    "Saturday",
+    "Sunday"
+   ]
+  }
+ ]
+}

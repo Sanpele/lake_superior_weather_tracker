@@ -1,3 +1,5 @@
+import { describeWind } from '../../utils/windUtils'
+
 /**
  * Displays wind, waves, and visibility from weather data.
  */
@@ -31,9 +33,8 @@ function WeatherPanel({ data, loading, error }) {
             <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '0.95rem' }}>
               {report.region.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
             </h4>
-            <p style={{ margin: '0.15rem 0' }}><strong>Wind Direction:</strong> {report.wind_direction ?? 'N/A'}</p>
-            <p style={{ margin: '0.15rem 0' }}><strong>Wind Speed:</strong> {report.wind_speed ?? 'N/A'}</p>
-            <p style={{ margin: '0.15rem 0' }}><strong>Wave Height:</strong> {report.wave_height ?? 'N/A'} ft</p>
+            <p style={{ margin: '0.15rem 0' }}><strong>Wind:</strong> {describeWind(report)}</p>
+            <p style={{ margin: '0.15rem 0' }}><strong>Wave Height:</strong> {report.wave_height != null ? `${report.wave_height} m` : 'N/A'}</p>
             <p style={{ margin: '0.15rem 0' }}><strong>Visibility:</strong> {report.visibility ?? 'N/A'}</p>
           </div>
         ))}

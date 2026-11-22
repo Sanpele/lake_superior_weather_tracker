@@ -1,4 +1,5 @@
 import WindArrow from './WindArrow'
+import { hasWindArrows } from '../../utils/windUtils'
 
 // Lake path data extracted from lake-superior-map.svg (the #96D5E1 fill path)
 const LAKE_PATH = `M588.307373,63.613739
@@ -605,7 +606,7 @@ function LakeSuperiorMap({ dailyReports }) {
           {/* Wind arrows — clipped to lake shape */}
           {dailyReports && dailyReports.length > 0 && (
             <g clipPath="url(#lake-clip)" style={{ pointerEvents: 'none' }}>
-              {dailyReports.map((report, idx) => (
+              {dailyReports.filter(hasWindArrows).map((report, idx) => (
                 <WindArrow
                   key={`${report.region}-${idx}`}
                   region={report.region}

@@ -2,7 +2,10 @@ import logging
 
 from django.db.models import Max
 
-from weather_tracker.models import WeatherReport, ReportType
+from weather_tracker.models import Region, ReportType, WeatherReport, WindState
+
+
+DAILY_REPORT_REGIONS = (Region.EASTERN_LAKE_SUPERIOR, Region.WESTERN_LAKE_SUPERIOR)
 
 
 class WeatherReportManager:
@@ -42,19 +45,17 @@ class WeatherReportManager:
     def build_daily_report_summary(weather_reports: list[WeatherReport]):
         wave_report = None
         detailed_report = None
-        extended_report = None
         for report in weather_reports:
             if report.report_type == ReportType.DETAILED:
                 detailed_report = report
-            elif report.report_type == ReportType.EXTENDED:
-                extended_report = report
             elif report.report_type == ReportType.WAVES:
                 wave_report = report
 
         return {
             "region": weather_reports[0].region,
-            "wind_direction": getattr(detailed_report, "wind_direction"),
-            "wind_speed": getattr(detailed_report, "wind_speed_knots"),
-            "wave_height": getattr(wave_report, "max_wave_height_m"),
-            "visibility": getattr(extended_report, "visibility_text"),
+            "wind_state": getattr(detailed_report, "wind_state", WindState.UNKNOWN),
+            "wind_direction": getattr(detailed_report, "wind_direction", None),
+            "wind_speed": getattr(detailed_report, "wind_speed_knots", None),
+            "wave_height": getattr(wave_report, "max_wave_height_m", None),
+            "visibility": getattr(detailed_report, "visibility_text", None),
         }
