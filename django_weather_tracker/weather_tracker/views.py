@@ -1,11 +1,14 @@
 from collections import defaultdict
 
 import structlog
+from django.db import DatabaseError
 from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from weather_tracker.daily_conditions import build_daily_conditions
 from weather_tracker.db_managers.weather_report_manager import (
     DAILY_REPORT_REGIONS,
     WeatherReportManager,
@@ -44,7 +47,14 @@ class DailyWeatherReportView(APIView):
     def get(self, request: Request):
         logger.info("Daily Weather Report")
 
-        latest_reports = WeatherReportManager().get_latest_weather_reports()
+        try:
+            latest_reports = WeatherReportManager().get_latest_weather_reports()
+        except DatabaseError:
+            logger.exception("Could not read daily weather reports")
+            return Response(
+                {"success": False, "info": "Weather data is unavailable"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
         grouped = defaultdict(list)
 
@@ -56,4 +66,10 @@ class DailyWeatherReportView(APIView):
         for region, rows in grouped.items():
             response.append(WeatherReportManager().build_daily_report_summary(rows))
 
-        return Response({"success": True, "daily_reports": response})
+        return Response(
+            {
+                "success": True,
+                "daily_reports": response,
+                **build_daily_conditions(latest_reports),
+            }
+        )
