@@ -18,8 +18,8 @@ const DIRECTION_TO_DEGREES = {
 // Region bounds for arrow grids (native SVG coordinates)
 // Lake split at x=590 to balance visible lake area (lake extends further east)
 const REGION_BOUNDS = {
-  'easternlakesuperior': { minX: 590, maxX: 1024, minY: 0, maxY: 649 },
-  'westernlakesuperior': { minX: 0, maxX: 590, minY: 0, maxY: 649 }
+  eastern_lake_superior: { minX: 590, maxX: 1024, minY: 0, maxY: 649 },
+  western_lake_superior: { minX: 0, maxX: 590, minY: 0, maxY: 649 }
 }
 
 /**
@@ -34,27 +34,36 @@ export function directionToDegrees(direction) {
 }
 
 /**
+ * A marine wind is named for where it blows from, so its arrow points the opposite way
+ * @param {string} fromDirection - Direction the wind blows from (e.g., "northwest")
+ * @returns {number} Heading the arrow points toward (0-360), 0 = North
+ */
+export function windArrowHeading(fromDirection) {
+  return (directionToDegrees(fromDirection) + 180) % 360
+}
+
+/**
  * Only a reported wind has a direction an arrow can honestly show
- * @param {{wind_state: string}} report - Daily report for a region
+ * @param {{wind: {state: string}}} conditions - Daily conditions for a region
  * @returns {boolean} Whether to draw wind arrows
  */
-export function hasWindArrows(report) {
-  return report.wind_state === 'reported'
+export function hasWindArrows(conditions) {
+  return conditions.wind.state === 'reported'
 }
 
 /**
  * Describe a region's opening wind for display
- * @param {{wind_state: string, wind_direction: ?string, wind_speed: ?number}} report
+ * @param {{state: string, from_direction: ?string, speed_knots: ?number}} wind
  * @returns {string} Display text
  */
-export function describeWind(report) {
-  switch (report.wind_state) {
+export function describeWind(wind) {
+  switch (wind.state) {
     case 'reported':
-      return `${report.wind_direction} ${report.wind_speed} kt`
+      return `${wind.from_direction} ${wind.speed_knots} kt`
     case 'light':
       return 'Light'
     case 'variable':
-      return `Variable ${report.wind_speed} kt`
+      return `Variable ${wind.speed_knots} kt`
     default:
       return 'N/A'
   }
@@ -89,13 +98,11 @@ export function getArrowColor(windSpeed) {
 
 /**
  * Get bounds for a region (area to fill with arrows)
- * @param {string} region - Region name
- * @returns {{minX: number, maxX: number, minY: number, maxY: number}} Bounds in native SVG coordinates
+ * @param {string} regionId - Region id from the daily conditions
+ * @returns {{minX: number, maxX: number, minY: number, maxY: number}|undefined} Bounds in native SVG coordinates
  */
-export function getRegionBounds(region) {
-  if (!region) return { minX: 400, maxX: 624, minY: 200, maxY: 449 }
-  const normalized = region.toLowerCase().replace(/[_\s]/g, '')
-  return REGION_BOUNDS[normalized] || { minX: 400, maxX: 624, minY: 200, maxY: 449 }
+export function getRegionBounds(regionId) {
+  return REGION_BOUNDS[regionId]
 }
 
 /**
