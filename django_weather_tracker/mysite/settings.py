@@ -11,10 +11,13 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-s(cu(qudl1bp+o&d+(=537ae^wg*qv)tam_-d0-3f+$$v=13*c"
-
 DEBUG = env.bool("DEBUG", default=False)
+
+# SECURITY WARNING: keep the secret key used in production secret!
+if DEBUG:
+    SECRET_KEY = env.str("SECRET_KEY", default="insecure-local-development-key")
+else:
+    SECRET_KEY = env.str("SECRET_KEY")
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
