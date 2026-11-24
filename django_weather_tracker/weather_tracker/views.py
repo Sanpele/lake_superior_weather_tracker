@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import structlog
 from django.db import DatabaseError
 from django.http import JsonResponse
@@ -9,10 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from weather_tracker.daily_conditions import build_daily_conditions
-from weather_tracker.db_managers.weather_report_manager import (
-    DAILY_REPORT_REGIONS,
-    WeatherReportManager,
-)
+from weather_tracker.db_managers.weather_report_manager import WeatherReportManager
 from weather_tracker.parsers.marine_xml_api_parser import MarineXmlAPIParser
 from weather_tracker.scraping_logic.weather_web_scraper import GovWeatherRequest
 from weather_tracker.serializers.weather_report_serializer import (
@@ -56,20 +51,4 @@ class DailyWeatherReportView(APIView):
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
-        grouped = defaultdict(list)
-
-        for row in latest_reports:
-            if row.region in DAILY_REPORT_REGIONS:
-                grouped[row.region].append(row)
-
-        response = []
-        for region, rows in grouped.items():
-            response.append(WeatherReportManager().build_daily_report_summary(rows))
-
-        return Response(
-            {
-                "success": True,
-                "daily_reports": response,
-                **build_daily_conditions(latest_reports),
-            }
-        )
+        return Response({"success": True, **build_daily_conditions(latest_reports)})
