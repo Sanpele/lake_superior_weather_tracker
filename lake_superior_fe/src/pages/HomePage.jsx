@@ -8,7 +8,7 @@ function HomePage() {
   return (
     <main className="home-page">
       <h1 style={{ margin: '0.5rem 0', fontSize: '2.2em' }}>Lake Superior Weather</h1>
-      <LakeSuperiorMap dailyReports={data?.daily_reports} />
+      <LakeSuperiorMap dailyConditions={data?.daily_conditions} />
       <WeatherPanel data={data} loading={loading} error={error} />
     </main>
   )

@@ -577,7 +577,7 @@ C844.647705,265.466156 843.797058,266.152527 842.585571,266.888184z`
  * Lake Superior map with inline SVG and wind arrow overlays.
  * Arrows are clipped to the lake shape using SVG <clipPath>.
  */
-function LakeSuperiorMap({ dailyReports }) {
+function LakeSuperiorMap({ dailyConditions }) {
   return (
     <div className="lake-superior-map" aria-label="Map of Lake Superior">
       <div style={{ width: '60vw', maxWidth: 1600, marginLeft: 'calc(50% - 30vw)', padding: '0.5rem 0' }}>
@@ -604,14 +604,14 @@ function LakeSuperiorMap({ dailyReports }) {
           <path fill="#F4F9FB" d={ISLAND_PATH_2} />
 
           {/* Wind arrows — clipped to lake shape */}
-          {dailyReports && dailyReports.length > 0 && (
+          {dailyConditions && dailyConditions.length > 0 && (
             <g clipPath="url(#lake-clip)" style={{ pointerEvents: 'none' }}>
-              {dailyReports.filter(hasWindArrows).map((report, idx) => (
+              {dailyConditions.filter(hasWindArrows).map((conditions) => (
                 <WindArrow
-                  key={`${report.region}-${idx}`}
-                  region={report.region}
-                  windDirection={report.wind_direction}
-                  windSpeed={report.wind_speed}
+                  key={conditions.region.id}
+                  regionId={conditions.region.id}
+                  fromDirection={conditions.wind.from_direction}
+                  windSpeed={conditions.wind.speed_knots}
                 />
               ))}
             </g>

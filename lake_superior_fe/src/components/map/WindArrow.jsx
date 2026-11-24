@@ -1,20 +1,22 @@
 import {
-  directionToDegrees,
   getArrowSize,
   getArrowColor,
   getRegionBounds,
-  getGridSpacing
+  getGridSpacing,
+  windArrowHeading
 } from '../../utils/windUtils'
 
 /**
  * Renders a grid of wind arrows filling a specific region.
- * Arrows are clipped to the lake shape by the parent's <clipPath>.
+ * Arrows point where the wind is going and are clipped to the lake shape by the parent's <clipPath>.
  */
-function WindArrow({ region, windDirection, windSpeed }) {
-  const degrees = directionToDegrees(windDirection)
+function WindArrow({ regionId, fromDirection, windSpeed }) {
+  const bounds = getRegionBounds(regionId)
+  if (!bounds) return null
+
+  const degrees = windArrowHeading(fromDirection)
   const arrowSize = getArrowSize(windSpeed)
   const color = getArrowColor(windSpeed)
-  const bounds = getRegionBounds(region)
   const gridSpacing = getGridSpacing(windSpeed)
   const radians = (degrees * Math.PI) / 180
 
