@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from django.db import OperationalError
 from django.test import TestCase
 
 from weather_tracker.models import WeatherReport
@@ -148,3 +149,97 @@ class TestDailyReport(WeatherEndpointTestCase):
         self.assertEqual(report["wind_state"], "unknown")
         self.assertIsNone(report["wind_speed"])
         self.assertEqual(report["wave_height"], 2.0)
+
+
+class TestDailyConditions(WeatherEndpointTestCase):
+
+    def daily_conditions(self):
+        response = self.client.get("/weather-report/")
+        self.assertEqual(response.status_code, 200)
+        return response.json()["daily_conditions"]
+
+    def test_real_feed__gives_each_regions_conditions(self):
+        self.ingest(valid_weather_api_response)
+
+        western, eastern = self.daily_conditions()
+
+        self.assertEqual(
+            eastern,
+            {
+                "region": {
+                    "id": "eastern_lake_superior",
+                    "name": "Eastern Lake Superior",
+                },
+                "wind": {
+                    "state": "reported",
+                    "from_direction": "south",
+                    "speed_knots": 15.0,
+                },
+                "peak_wave_height_m": 1.0,
+                "visibility": None,
+            },
+        )
+        self.assertEqual(western["region"]["id"], "western_lake_superior")
+        self.assertEqual(western["wind"]["from_direction"], "northwest")
+
+    def test_region_with_no_reports__is_present_and_unknown(self):
+        self.ingest(
+            feed(
+                ("Forecast for Today - Eastern Lake Superior", "Wind west 10 knots."),
+                ("Waves for Today - Eastern Lake Superior", "Waves 1 metre."),
+            )
+        )
+
+        western, eastern = self.daily_conditions()
+
+        self.assertEqual(eastern["region"]["id"], "eastern_lake_superior")
+        self.assertEqual(
+            western,
+            {
+                "region": {
+                    "id": "western_lake_superior",
+                    "name": "Western Lake Superior",
+                },
+                "wind": {
+                    "state": "unknown",
+                    "from_direction": None,
+                    "speed_knots": None,
+                },
+                "peak_wave_height_m": None,
+                "visibility": None,
+            },
+        )
+
+    def test_no_stored_reports__gives_both_regions_and_no_update_time(self):
+        response = self.client.get("/weather-report/").json()
+
+        self.assertIsNone(response["updated_at"])
+        self.assertEqual(
+            [c["region"]["id"] for c in response["daily_conditions"]],
+            ["western_lake_superior", "eastern_lake_superior"],
+        )
+
+    def test_updated_at__is_the_feeds_update_time_in_utc(self):
+        self.ingest(valid_weather_api_response)
+
+        response = self.client.get("/weather-report/").json()
+
+        self.assertEqual(response["updated_at"], "2026-02-16T15:26:57Z")
+
+    def test_old_daily_reports__stay_available_during_the_rollout(self):
+        self.ingest(valid_weather_api_response)
+
+        report = self.daily_reports()["eastern_lake_superior"]
+
+        self.assertEqual(report["region"], "eastern_lake_superior")
+        self.assertEqual(report["wind_speed"], 15.0)
+        self.assertEqual(report["wave_height"], 1.0)
+
+    def test_failed_database_read__is_a_503(self):
+        with patch.object(
+            WeatherReport.objects, "aggregate", side_effect=OperationalError
+        ):
+            response = self.client.get("/weather-report/")
+
+        self.assertEqual(response.status_code, 503)
+        self.assertFalse(response.json()["success"])

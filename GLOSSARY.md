@@ -16,6 +16,14 @@ _Avoid_: Parsed summary, parsed data
 The first wind a forecast Bulletin states, taken at the top of any stated speed range.
 _Avoid_: Current wind, latest wind
 
+**Wind direction**:
+The compass direction a wind blows from. A northwest wind moves toward the southeast.
+_Avoid_: Wind heading
+
+**Daily conditions**:
+What a region's latest Bulletins tell us about its wind, waves, and visibility. Every region has Daily conditions, even when parts of them are Unknown.
+_Avoid_: Daily report, weather summary
+
 **Peak wave height**:
 The highest wave height a wave Bulletin states anywhere in its forecast period.
 _Avoid_: Current waves, wave height

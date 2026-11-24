@@ -29,17 +29,10 @@ class WeatherReportManager:
             return False, "something went wrong"
 
     def get_latest_weather_reports(self):
-        try:
-            latest_updated_time = WeatherReport.objects.aggregate(
-                max_pt=Max("updated_time")
-            )["max_pt"]
-            weather_reports = WeatherReport.objects.filter(
-                updated_time=latest_updated_time
-            )
-            return weather_reports
-        except Exception as e:
-            self.logger.exception(e)
-            return False
+        latest_updated_time = WeatherReport.objects.aggregate(
+            max_pt=Max("updated_time")
+        )["max_pt"]
+        return list(WeatherReport.objects.filter(updated_time=latest_updated_time))
 
     @staticmethod
     def build_daily_report_summary(weather_reports: list[WeatherReport]):
