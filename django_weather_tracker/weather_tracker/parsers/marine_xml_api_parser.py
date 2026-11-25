@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from weather_tracker.bulletin_interpretation import (
     Conditions,
@@ -45,8 +45,10 @@ class MarineXmlAPIParser(GenericParser):
         return report_list
 
     def parse_webpage_and_create_reports(self, raw_report_dict):
-        main_data = raw_report_dict.get("feed")
+        main_data = raw_report_dict.get("feed") or {}
         entry_list = main_data.get("entry", [])
+        if isinstance(entry_list, dict):  # xmltodict gives a lone entry unwrapped
+            entry_list = [entry_list]
 
         report_list = [
             self.parse_weather_entry(
@@ -63,7 +65,9 @@ class MarineXmlAPIParser(GenericParser):
             return None
 
         updated_str = main_data.get("updated")
-        updated_time = datetime.strptime(updated_str, "%Y-%m-%dT%H:%M:%SZ")
+        updated_time = datetime.strptime(updated_str, "%Y-%m-%dT%H:%M:%SZ").replace(
+            tzinfo=timezone.utc
+        )
         title = entry_dict.get("title", "")
         summary = entry_dict.get("summary", {}).get("#text", "")
 
@@ -72,6 +76,7 @@ class MarineXmlAPIParser(GenericParser):
             date=updated_time.date(),
             published_time=entry_dict.get("published"),
             updated_time=updated_time,
+            last_seen_at=updated_time,
             category=Category.MARINE,
             summary=summary,
             link=entry_dict.get("link", {}).get("@href"),  # webpage link,

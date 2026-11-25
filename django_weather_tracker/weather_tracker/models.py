@@ -24,6 +24,8 @@ class WeatherReport(models.Model):
     date = models.DateField()
     published_time = models.DateTimeField()
     updated_time = models.DateTimeField()
+    # Update time of the newest feed this Bulletin appeared in
+    last_seen_at = models.DateTimeField()
     category = models.CharField(max_length=20, choices=Category.choices)
     summary = models.TextField()
 

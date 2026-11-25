@@ -19,6 +19,7 @@ def stored_report(title, text, **fields):
         "date": PUBLISHED.date(),
         "published_time": PUBLISHED,
         "updated_time": PUBLISHED,
+        "last_seen_at": PUBLISHED,
         "category": "marine",
         "summary": f"{text}{ISSUE_LINE}",
         "link": "https://www.weather.gc.ca/marine",

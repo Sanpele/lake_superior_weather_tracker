@@ -25,3 +25,7 @@ A push to PythonAnywhere deploys and migrates immediately, and data repairs are 
 Issue times, conditions, wave phrases, and extended-forecast days aren't displayed or stored as fields today. They are being kept because future features are planned for them, so don't remove them as dead code.
 
 Marine warning entries carry only an issue line in their Bulletin text. The warning's kind, status, and area are in the entry title, for example "STRONG WIND WARNING IN EFFECT, Eastern Lake Superior". Any future warning feature should start from the title.
+
+## Check whether a scrape succeeded
+
+`POST /weather/` now returns `success: false` with a 502 when it can't read the feed, and a 503 when it can't save it. The scheduled job that calls it doesn't check either yet, so a broken scrape goes unnoticed until the site's "Updated" time looks old. Alerting on a failed response, or on several in a row, would catch it early.

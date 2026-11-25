@@ -1,5 +1,6 @@
 import logging
 
+from django.db import transaction
 from django.db.models import Max
 
 from weather_tracker.models import WeatherReport
@@ -10,23 +11,25 @@ class WeatherReportManager:
     def __init__(self):
         self.logger = logging.getLogger()
 
-    def save_list(self, weather_report_list: list[WeatherReport]):
-        try:
-            have_we_already_saved_today = WeatherReport.objects.filter(
-                published_time=weather_report_list[0].published_time
-            ).exists()
-
-            if have_we_already_saved_today:
-                return False, "we already saved today bud :)"
-
-            WeatherReport.objects.bulk_create(weather_report_list)
-            return True, "saved successfully"
-        except Exception as e:
-            self.logger.exception(e)
-            return False, "something went wrong"
+    def save_list(self, weather_report_list: list[WeatherReport]) -> tuple[int, int]:
+        """Save each Bulletin not already stored. Returns (saved, already_saved)."""
+        saved = 0
+        with transaction.atomic():
+            for report in weather_report_list:
+                already_stored = WeatherReport.objects.filter(
+                    region=report.region,
+                    report_type=report.report_type,
+                    warning_status=report.warning_status,
+                    published_time=report.published_time,
+                ).update(last_seen_at=report.last_seen_at)
+                if not already_stored:
+                    report.save()
+                    saved += 1
+        return saved, len(weather_report_list) - saved
 
     def get_latest_weather_reports(self):
-        latest_updated_time = WeatherReport.objects.aggregate(
-            max_pt=Max("updated_time")
-        )["max_pt"]
-        return list(WeatherReport.objects.filter(updated_time=latest_updated_time))
+        """The Bulletins in the newest feed we read."""
+        newest_feed = WeatherReport.objects.aggregate(newest=Max("last_seen_at"))[
+            "newest"
+        ]
+        return list(WeatherReport.objects.filter(last_seen_at=newest_feed))
