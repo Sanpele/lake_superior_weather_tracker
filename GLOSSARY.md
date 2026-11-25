@@ -20,8 +20,12 @@ _Avoid_: Current wind, latest wind
 The compass direction a wind blows from. A northwest wind moves toward the southeast.
 _Avoid_: Wind heading
 
+**Current**:
+A Bulletin is current when it appeared in the newest feed we read, whenever it was published. A Bulletin that drops out of the feed is no longer current.
+_Avoid_: Latest, today's
+
 **Daily conditions**:
-What a region's latest Bulletins tell us about its wind, waves, and visibility. Every region has Daily conditions, even when parts of them are Unknown.
+What a region's current Bulletins tell us about its wind, waves, and visibility. Every region has Daily conditions, even when parts of them are Unknown.
 _Avoid_: Daily report, weather summary
 
 **Peak wave height**:

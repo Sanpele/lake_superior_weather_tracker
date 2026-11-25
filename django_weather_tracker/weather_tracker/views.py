@@ -1,12 +1,12 @@
 import structlog
 from django.db import DatabaseError
-from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from weather_tracker.daily_conditions import build_daily_conditions
+from weather_tracker.exceptions import ScraperError
 from weather_tracker.db_managers.weather_report_manager import WeatherReportManager
 from weather_tracker.parsers.marine_xml_api_parser import MarineXmlAPIParser
 from weather_tracker.scraping_logic.weather_web_scraper import GovWeatherRequest
@@ -27,13 +27,34 @@ class WeatherForecastView(APIView):
         return Response(serializer.data)
 
     def post(self, request: Request):
-        weather_dict = GovWeatherRequest().get()
-        weather_report_list = MarineXmlAPIParser().parse(weather_dict)
-        was_save_successful, reason = WeatherReportManager().save_list(
-            weather_report_list
+        try:
+            weather_dict = GovWeatherRequest().get()
+            weather_report_list = MarineXmlAPIParser().parse(weather_dict)
+        except ScraperError:
+            weather_report_list = []
+        if not weather_report_list:
+            logger.error("Could not read the marine feed")
+            return Response(
+                {"success": False, "info": "Could not read the marine feed"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        try:
+            saved, already_saved = WeatherReportManager().save_list(weather_report_list)
+        except DatabaseError:
+            logger.exception("Could not save the marine feed")
+            return Response(
+                {"success": False, "info": "Could not save the feed"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        return Response(
+            {
+                "success": True,
+                "info": "Feed saved",
+                "saved": saved,
+                "already_saved": already_saved,
+            }
         )
-        content = {"success": was_save_successful, "info": reason}
-        return JsonResponse(content)
 
 
 class DailyWeatherReportView(APIView):

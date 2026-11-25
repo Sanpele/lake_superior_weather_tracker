@@ -2,6 +2,7 @@
 
 Every region is always present, western first. A value the Bulletins did not
 give us is Unknown or null. Wind is named by the direction it blows from.
+updated_at is when the newest feed we read was updated.
 """
 
 from weather_tracker.bulletin_interpretation import Region, ReportType, WindState
@@ -14,7 +15,7 @@ _REGION_NAMES = {
 
 def build_daily_conditions(reports) -> dict:
     return {
-        "updated_at": max((r.updated_time for r in reports), default=None),
+        "updated_at": max((r.last_seen_at for r in reports), default=None),
         "daily_conditions": [
             _region_conditions(region, name, reports)
             for region, name in _REGION_NAMES.items()

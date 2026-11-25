@@ -5,9 +5,11 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+REQUEST_TIMEOUT_SECONDS = 20
+
 
 def get_request(url: str) -> str or None:
-    response = requests.get(url)
+    response = requests.get(url, timeout=REQUEST_TIMEOUT_SECONDS)
     if response.status_code == 200:
         return response.text
     else:

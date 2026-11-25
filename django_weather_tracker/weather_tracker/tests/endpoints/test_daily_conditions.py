@@ -1,77 +1,13 @@
 from unittest.mock import patch
 
 from django.db import OperationalError
-from django.test import TestCase
 
 from weather_tracker.models import WeatherReport
 from weather_tracker.tests.testing_mocks import valid_weather_api_response
-
-GET_REQUEST = "weather_tracker.scraping_logic.weather_web_scraper.get_request"
-ISSUE_LINE = "&#60;br/>Issued 10:30  AM EDT 16 June 2026"
-
-
-def feed(*entries):
-    body = "".join(
-        f"""<entry>
-        <title>{title}</title>
-        <link type="text/html" href="https://www.weather.gc.ca/marine"/>
-        <published>2026-06-16T14:30:00Z</published>
-        <summary type="html">{text}{ISSUE_LINE}</summary>
-        <id>tag:weather.gc.ca,2013-04-16:{index}</id>
-        </entry>"""
-        for index, (title, text) in enumerate(entries)
-    )
-    return f"""<?xml version="1.0" encoding="UTF-8"?>
-    <feed xmlns="http://www.w3.org/2005/Atom">
-    <updated>2026-06-16T14:26:57Z</updated>{body}</feed>"""
-
-
-class WeatherEndpointTestCase(TestCase):
-
-    def ingest(self, xml):
-        with patch(GET_REQUEST, return_value=xml):
-            return self.client.post("/weather/").json()
-
-
-class TestSavingFeeds(WeatherEndpointTestCase):
-
-    def test_same_feed_twice__is_only_saved_once(self):
-        first = self.ingest(valid_weather_api_response)
-        second = self.ingest(valid_weather_api_response)
-
-        self.assertTrue(first["success"])
-        self.assertFalse(second["success"])
-        self.assertEqual(WeatherReport.objects.count(), 6)
-
-    def test_same_feed_with_warning_twice__is_only_saved_once(self):
-        xml = feed(
-            ("STRONG WIND WARNING IN EFFECT, Eastern Lake Superior", ""),
-            ("Forecast for Today - Eastern Lake Superior", "Wind south 15 knots."),
-        )
-
-        self.ingest(xml)
-        self.ingest(xml)
-
-        self.assertEqual(WeatherReport.objects.count(), 2)
-
-    def test_watch_and_warning_published_together__are_both_saved(self):
-        result = self.ingest(
-            feed(
-                ("SQUALL WATCH IN EFFECT, Eastern Lake Superior", ""),
-                ("SQUALL WARNING IN EFFECT, Eastern Lake Superior", ""),
-            )
-        )
-
-        self.assertTrue(result["success"])
-        self.assertEqual(WeatherReport.objects.count(), 2)
+from weather_tracker.tests.endpoints.helpers import WeatherEndpointTestCase, feed
 
 
 class TestDailyConditions(WeatherEndpointTestCase):
-
-    def daily_conditions(self):
-        response = self.client.get("/weather-report/")
-        self.assertEqual(response.status_code, 200)
-        return response.json()["daily_conditions"]
 
     def test_real_feed__gives_each_regions_conditions(self):
         self.ingest(valid_weather_api_response)
